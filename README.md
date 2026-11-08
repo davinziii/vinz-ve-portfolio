@@ -1,4 +1,4 @@
-# Visuals in Motion
+# vinz-ve-portfolio
 
 Vinz de Leon’s Next.js App Router portfolio using 30 supplied works. No stock media, fabricated clients, or invented results. Original media remains untouched.
 
@@ -45,3 +45,4 @@ Social links, approved biography, confirmed editing software, project context/ro
 ## Validation and limits
 
 Production build and TypeScript checks passed. All 30 media entries have matching optimized assets; no exact duplicate hashes were found. A browser preview from the in-app browser could not reach the Windows local server. See the handoff for any later hosted verification. Spoken-content captions were not provided. Vinz’s portrait is an AI-assisted wardrobe/background edit of his supplied photo. See DESIGN-NOTES.md for the prompt and reference sources.
+
