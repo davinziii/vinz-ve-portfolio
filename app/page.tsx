@@ -24,14 +24,15 @@ export default function Home() {
   const [showAll, setShowAll] = useState(false);
   const reduced = useReducedMotion();
   const hero = projects.find(p => p.id === 'marms4')!;
-  const featured = ['redbull2', 'jrus2', 'marms3'].map(id => projects.find(p => p.id === id)!);
+  const heroProjects = ['redbull2', 'jrus2', 'marms3', 'fuel2'].map(id => projects.find(p => p.id === id)!);
+  const initialCount = 12;
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
       if (reduced) return;
       gsap.from('.hero-line > span', {yPercent: 110, duration: .9, stagger: .12, ease: 'power3.out'});
-      gsap.from('.portrait-wrap', {opacity: 0, y: 25, duration: 1, delay: .15, ease: 'power3.out'});
+      gsap.from('.hero-showcase', {opacity: 0, y: 25, duration: 1, delay: .15, ease: 'power3.out'});
       gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach(el => {
         gsap.from(el, {opacity: 0, y: 24, duration: .65, ease: 'power2.out', scrollTrigger: {trigger: el, start: 'top 94%', once: true}});
       });
@@ -47,7 +48,7 @@ export default function Home() {
 
   const visible = projects.filter(p => (filter === 'All work' || category(p) === filter) &&
     (filter !== 'Video edits' || collection === 'Both collections' || p.group === collection));
-  const display = showAll ? visible : visible.slice(0, 8);
+  const display = showAll ? visible : visible.slice(0, initialCount);
 
   function magnetic(e: React.PointerEvent<HTMLAnchorElement>) {
     if (reduced || e.pointerType !== 'mouse') return;
@@ -82,30 +83,25 @@ export default function Home() {
           <button className="watch-button" onClick={() => setSelected(hero)}><span><Play size={15} fill="currentColor"/></span>Watch an animation</button>
         </div>
       </div>
-      <div className="portrait-wrap">
-        <img className="hero-portrait" src="/media/vinz-portrait.webp" alt="Vinz de Leon in a casual black T-shirt" width="900" height="1125" fetchPriority="high"/>
-        <div className="portrait-note"><span>Vinz de Leon</span><ArrowUpRight size={23}/></div>
+      <div className="hero-showcase" aria-label="Featured portfolio projects">
+        {heroProjects.map(p => <button className="hero-project" key={p.id} onClick={() => setSelected(p)} aria-label={'Preview '+p.title}>
+          <Preview p={p} hero/>
+          <span className="hero-project-title">{p.title}<ArrowUpRight size={16}/></span>
+        </button>)}
       </div>
       <a href="#work" className="hero-scroll">Scroll for the good stuff <ArrowDown size={18}/></a>
     </section>
 
     <div className="marquee" aria-label="Video editing, 2D animation, graphic design"><div aria-hidden="true">{[0,1].map(n => <span key={n}>Video editing <b>+</b> 2D animation <b>+</b> Graphic design <b>+</b> Motion graphics <b>+</b> </span>)}</div></div>
 
-    <section id="work" className="selected section-pad">
-      <div className="section-inner">
-        <div className="section-heading" data-reveal><div><h2>A few favorites.</h2><p>A little editing, a little animation, a little design.</p></div><a className="text-link" href="#playground">All projects <ArrowUpRight size={21}/></a></div>
-        <div className="featured-grid">{featured.map((p,i) => <div className={'feature feature-'+i} key={p.id} data-reveal><Card p={p} index={i} onOpen={setSelected}/></div>)}</div>
-      </div>
-    </section>
-
-    <section id="playground" className="playground section-pad">
-      <div className="section-inner">
+    <section id="work" className="playground section-pad">
+      <div id="playground" className="section-inner">
         <div className="section-heading" data-reveal><h2>The work.</h2><p>Pick a category. Find something you like.</p></div>
         <div className="filter-bar" role="group" aria-label="Filter work">{categories.map(c => <button key={c} className={filter === c ? 'active' : ''} aria-pressed={filter === c} onClick={() => {stopPreview(); setFilter(c); setShowAll(false);}}>{c}<span>{c === 'All work' ? projects.length : projects.filter(p => category(p) === c).length}</span></button>)}</div>
         {filter === 'Video edits' && <div className="collection-filter" role="group" aria-label="Video collection">{['Both collections', 'Reel 1', 'Reel 2'].map(c => <button key={c} aria-pressed={collection === c} onClick={() => {stopPreview(); setCollection(c);}}>{c}</button>)}</div>}
         <motion.div layout className="gallery"><AnimatePresence mode="popLayout">{display.map((p,i) => <Card p={p} index={i} onOpen={setSelected} key={p.id}/>)}</AnimatePresence></motion.div>
         <p className="gallery-status" aria-live="polite">{display.length} of {visible.length} projects</p>
-        {visible.length > 8 && <button className="outline-button" onClick={() => setShowAll(!showAll)}>{showAll ? 'Show less' : 'More work'} <Plus size={20}/></button>}
+        {visible.length > initialCount && <button className="outline-button" onClick={() => setShowAll(!showAll)}>{showAll ? 'Show less' : 'More work'} <Plus size={20}/></button>}
       </div>
     </section>
 
