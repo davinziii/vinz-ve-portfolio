@@ -1,1 +1,18 @@
-{"name":"Independent creative","mark":"V/M","intro":"Video editor & visual designer","about":"I work at the intersection of editing, animation and design—shaping footage, characters and ideas into visuals with rhythm and personality.","philosophy":"A precise cut. An unexpected frame. A character coming to life. I care about the small decisions that make a visual worth watching.","email":"","socials":[],"tools":[],"capabilities":["Video editing","2D animation","Motion graphics","Graphic design","Visual storytelling","Social media creatives"]}
+{
+  "name": "Vinz de Leon",
+  "mark": "Vinz de Leon",
+  "intro": "Video editor & graphic designer",
+  "about": "I’m Vinz, a video editor and graphic designer. My work includes short-form edits, character animation, and graphics for products and social media.",
+  "philosophy": "I like work with personality: a well-timed cut, a character with a little attitude, or a simple layout that lets the idea come through.",
+  "email": "vinzdeleon.work@gmail.com",
+  "socials": [],
+  "tools": [],
+  "capabilities": [
+    "Video editing",
+    "2D animation",
+    "Motion graphics",
+    "Graphic design",
+    "Visual storytelling",
+    "Social media creatives"
+  ]
+}

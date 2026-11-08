@@ -1,6 +1,6 @@
 # Visuals in Motion
 
-A complete Next.js App Router portfolio using 30 supplied works. No stock media, fabricated clients, or invented results. Original media remains untouched.
+Vinz de Leon’s Next.js App Router portfolio using 30 supplied works. No stock media, fabricated clients, or invented results. Original media remains untouched.
 
 ## Run locally
 
@@ -36,12 +36,12 @@ The script scans supported media, hashes exact duplicates, probes dimensions/dur
 
 ## Layout and motion
 
-Dark kinetic hero → lime specialties marquee → selected editorial features → filterable creative playground → About → capabilities → contact. GSAP owns initial text choreography and scroll reveals; Motion owns gallery layout/entrances and project dialog entrance; CSS owns marquee, hover and scroll-indicator movement. Selected CTAs respond gently to the pointer. Hover/focus previews are muted, one preview at a time, pause offscreen and when the page is hidden. Expanded videos use native controls with sound available. Phone users tap to open projects. The native modal traps focus, Escape closes, and focus returns to the launching button. Reduced-motion preferences disable previews and continuous movement. No scroll hijacking.
+Personal portrait hero → specialties marquee → selected editorial features → filterable creative playground → About → capabilities → contact. GSAP owns initial text choreography and scroll reveals; Motion owns gallery layout/entrances and project dialog entrance; CSS owns marquee, hover and scroll-indicator movement. Selected CTAs respond gently to the pointer. Hover/focus previews are muted, one preview at a time, pause offscreen and when the page is hidden. Expanded videos use native controls with sound available. Phone users tap to open projects. The native modal traps focus, Escape closes, and focus returns to the launching button. Reduced-motion preferences disable previews and continuous movement. No scroll hijacking.
 
 ## Missing personal content
 
-Display name/brand confirmation, real email and social links, approved biography, portrait, confirmed editing software, project context/roles, and spoken-content captions. No metrics or software claims were invented. The hero is an actual animation excerpt, not a fabricated compiled showreel. Contact is deliberately inactive until a real address is configured. Supplied graphics contain brand imagery; labels describe the artwork and do not imply those brands were clients.
+Social links, approved biography, confirmed editing software, project context/roles, and spoken-content captions. No metrics or software claims were invented. The animation button opens an actual excerpt. Contact links use the supplied vinzdeleon.work@gmail.com address. Supplied graphics contain brand imagery; labels describe the artwork and do not imply those brands were clients.
 
 ## Validation and limits
 
-Production build and TypeScript checks passed. All 30 media entries have matching optimized assets; no exact duplicate hashes were found. A browser preview from the in-app browser could not reach the Windows local server. See the handoff for any later hosted verification. Spoken-content captions were not provided. Configure contact details before sending the portfolio to prospective clients.
+Production build and TypeScript checks passed. All 30 media entries have matching optimized assets; no exact duplicate hashes were found. A browser preview from the in-app browser could not reach the Windows local server. See the handoff for any later hosted verification. Spoken-content captions were not provided. Vinz’s portrait is an AI-assisted wardrobe/background edit of his supplied photo. See DESIGN-NOTES.md for the prompt and reference sources.
