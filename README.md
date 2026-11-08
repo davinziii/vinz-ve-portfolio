@@ -1,48 +1,49 @@
 # vinz-ve-portfolio
 
-Vinz de Leon’s Next.js App Router portfolio using 30 supplied works. No stock media, fabricated clients, or invented results. Original media remains untouched.
+Vinz de Leon’s portfolio: six story chapters and an interactive editing-style project workspace. Built with the existing Next.js App Router, TypeScript, Tailwind CSS, GSAP, Motion and Lucide stack. No additional runtime dependencies.
 
-## Run locally
-
-Requires Node.js 22+ and npm. In this folder:
+## Run
 
 ```sh
 npm install
 npm run dev
 ```
 
-Open http://127.0.0.1:3000. For production: `npm run build`; the static site is exported to `out/`. Deploy that directory to any static host. Alternatively `npx serve out` to preview the export. This project uses static export, so `next start` is not the production serving method.
+Open http://127.0.0.1:3000. Run `npm run build` for the production static export in `out/`. `npm start` serves that export. The active production origin is https://vinz-ve-portfolio.vercel.app/.
 
-## Content
+## Structure
 
-- `content/profile.json`: name, mark, introduction, biography, philosophy, email, confirmed tools, capabilities, and social links. Empty email displays a truthful contact notice; adding email enables the mailto CTA. Add social links as `{"label":"Instagram","url":"https://..."}`.
-- `content/projects.json`: source-to-optimized mapping, dimensions, duration, category and file metadata. Project labels live in the `titles` map in `app/page.tsx`; an optional `title` field in each project overrides that map. Categories follow the source folders.
-- `public/media/`: optimized images, posters and MP4s.
-- `asset-inventory.json`: full local source paths, SHA-256 hashes and technical inventory. Excluded from hosted source; the browser never receives local paths.
-- `app/page.tsx`: reusable project card, media preview, accessible dialog, navigation and page sections.
-- `app/globals.css`: responsive layout and motion styling.
+- `app/page.tsx`: introduction, creative journey, project showcase, approach, about and contact chapters. Also owns chapter navigation, journey selection and GSAP scroll choreography.
+- `components/project-workbench.tsx`: selected-project state, category/reel filters, independent project-list scrolling, keyboard browsing and stable preview layout. Preview is left on desktop and first on mobile.
+- `components/project-media.tsx`: real video/image rendering, one-at-a-time playback, offscreen/tab-hidden pause, media-error recovery and accessible native expanded dialog.
+- `lib/projects.ts`: existing project titles, ordering, category mapping and descriptions, all connected to the original JSON.
+- `content/projects.json`: all 30 original entries and unchanged media/poster paths.
+- `content/profile.json`: identity, email, biography, confirmed tools, capabilities and optional social links.
+- `public/media/`: existing optimized WebP posters, graphics and MP4s. Source originals are untouched.
+- `app/globals.css`: dark visual system, responsive workspace and chapter layouts, and reduced-motion CSS.
 
-## Adding work
+## Explore the work
 
-Place new files into the original collection folders. With FFmpeg and FFprobe on PATH, run:
+Choose a category and then a project. The selected image or real video replaces the preview without reloading the page. Video Edits also exposes Reel 1 and Reel 2 filters. On desktop, the list scrolls independently on the right. On phones/tablets, it becomes a horizontal selector beneath the preview. Arrow keys, Home and End move selection once the project list has focus; previous/next buttons are available below the preview. Expanded views support Escape and return focus to the launching control.
+
+Only the hero and selected-project video exist outside an expanded view. Videos load metadata rather than autoplaying, starting one pauses the others, and offscreen or hidden-page videos pause. Thumbnail rows use lazy images. Failed videos retain a poster and expose Retry. Missing images show an explicit unavailable state.
+
+GSAP controls entrance/scroll reveals, the reading-progress line and subtle atmospheric motion. Motion handles media crossfades and expanded-view entrance. They do not animate the same properties on the same elements. Reduced-motion settings remove continuous/scroll motion and make media switches immediate. Scrolling remains native.
+
+## Add or edit projects
+
+Edit `content/projects.json` and labels in `lib/projects.ts`. Keep IDs unique and preserve real project context. Alternatively, place media into the source collections and run:
 
 ```sh
 node scripts/optimize-media.mjs "C:/Users/Vinz Pogi/Downloads/Port"
-node scripts/verify-media.mjs
+npm run verify:media
 npm run build
 ```
 
-The script scans supported media, hashes exact duplicates, probes dimensions/duration, skips unchanged optimized media, produces WebP posters and H.264 MP4s, and updates inventory/data. It does not modify source files. It preserves original proportions. Videos are 540px wide for web delivery, graphics up to 1200px, with fast-start MP4 metadata. If FFmpeg is missing, install it and put `ffmpeg` and `ffprobe` on PATH; existing bundled optimized assets still work without it. Keep unique project IDs. You can also manually add entries using the existing data structure.
+FFmpeg/FFprobe must be on PATH to regenerate optimized copies. Existing bundled assets work without them. The script never changes original files. Exact duplicates are identified by SHA-256. Project dimensions, durations and source-to-web mapping are retained.
 
-## Layout and motion
+## Content boundaries
 
-Personal portrait hero → specialties marquee → selected editorial features → filterable creative playground → About → capabilities → contact. GSAP owns initial text choreography and scroll reveals; Motion owns gallery layout/entrances and project dialog entrance; CSS owns marquee, hover and scroll-indicator movement. Selected CTAs respond gently to the pointer. Hover/focus previews are muted, one preview at a time, pause offscreen and when the page is hidden. Expanded videos use native controls with sound available. Phone users tap to open projects. The native modal traps focus, Escape closes, and focus returns to the launching button. Reduced-motion preferences disable previews and continuous movement. No scroll hijacking.
+No new clients, achievements, testimonials or project titles were invented. Existing descriptive titles were preserved exactly. Social links and software are omitted where not confirmed. Spoken-content captions have not been supplied. The small avatar remains an AI-assisted edit of Vinz’s photo; no large portrait is used in the hero.
 
-## Missing personal content
-
-Social links, approved biography, confirmed editing software, project context/roles, and spoken-content captions. No metrics or software claims were invented. The animation button opens an actual excerpt. Contact links use the supplied vinzdeleon.work@gmail.com address. Supplied graphics contain brand imagery; labels describe the artwork and do not imply those brands were clients.
-
-## Validation and limits
-
-Production build and TypeScript checks passed. All 30 media entries have matching optimized assets; no exact duplicate hashes were found. A browser preview from the in-app browser could not reach the Windows local server. See the handoff for any later hosted verification. Spoken-content captions were not provided. Vinz’s portrait is an AI-assisted wardrobe/background edit of his supplied photo. See DESIGN-NOTES.md for the prompt and reference sources.
-
+See `STORY-REDESIGN.md` for the audit, design decisions and verification record. Historical design notes remain in `DESIGN-NOTES.md`.

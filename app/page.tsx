@@ -1,127 +1,573 @@
-'use client';
-import {useEffect,useRef,useState} from 'react';
-import {AnimatePresence,motion,useReducedMotion} from 'motion/react';
-import {ArrowUpRight,ArrowDown,Play,Plus,X,Volume2,Menu,ArrowRight} from 'lucide-react';
-import gsap from 'gsap';import {ScrollTrigger} from 'gsap/ScrollTrigger';
-import raw from '../content/projects.json';import profile from '../content/profile.json';
-type Project=typeof raw[number];
-const titles:Record<string,string>={airpods:'AirPods product graphic',coffee2:'Coffee promotion',fuel1:'Fuel / Electric blue',fuel2:'Crush the limit',ps5:'Play without limits',realestate1:'Win more listings',redbull1:'Energy, amplified',redbull2:'Red Bull product study',serum1:'The Ordinary / Collection',serum2:'Skincare product graphic',spanish:'Spanish latte',marms3:'Marmot character animation',marms4:'An interview, animated',marms5:'The application',marms6:'A cast of characters',okd6:'Small character, big feeling',okd7:'A moment of expression',okd8:'Drawn to move',okd9:'A quiet afternoon',profile4:'Pixel personality'};
-const projects=raw.map(p=>({...p,title:(p as Project & {title?:string}).title||titles[p.id]||(p.id.startsWith('jrus')?'JRUS / Edit ':'FOMO / Edit ')+p.id.slice(-1)}));type Item=typeof projects[number];
-const categories=['All work','Video edits','2D & motion','Graphic design'];
-const order=['redbull2','jrus1','marms4','serum2','fomo3','okd9','coffee2','ps5'];projects.sort((a,b)=>(order.includes(a.id)?order.indexOf(a.id):99)-(order.includes(b.id)?order.indexOf(b.id):99));
-const category=(p:Project)=>p.group==='Graphic Designs'?'Graphic design':p.group==='2d Animations'?'2D & motion':'Video edits';
-let activePreview:HTMLVideoElement|null=null;
-function stopPreview(){activePreview?.pause();activePreview=null;}
-function Preview({p,hero=false}:{p:Item;hero?:boolean}){const ref=useRef<HTMLVideoElement>(null);const [failed,setFailed]=useState(false);useEffect(()=>{const el=ref.current;if(!el)return;const observer=new IntersectionObserver(([e])=>{if(!e.isIntersecting)el.pause();});observer.observe(el);return()=>observer.disconnect()},[]);const play=()=>{if(window.matchMedia('(prefers-reduced-motion: reduce)').matches||!window.matchMedia('(hover:hover)').matches)return;stopPreview();if(ref.current){activePreview=ref.current;ref.current.play().catch(()=>{});}};return <div className={'media '+(hero?'hero-media':'')} onPointerEnter={play} onPointerLeave={()=>ref.current?.pause()} onFocus={play} onBlur={()=>ref.current?.pause()}>{p.type==='video'&&!failed?<video ref={ref} src={p.media} poster={p.poster} muted loop playsInline preload="none" onError={()=>setFailed(true)}/>:<img src={p.poster} alt={p.title} loading={hero?'eager':'lazy'} width={p.width} height={p.height}/>}<span className="media-type">{p.type==='video'?<Play size={12} fill="currentColor"/>:<Plus size={14}/>} {p.type==='video'?'Play project':'View design'}</span></div>}
-function Card({p,index,onOpen}:{p:Item;index:number;onOpen:(p:Item)=>void}){const reduced=useReducedMotion();return <motion.button layout={!reduced} className={'project-card '+(p.height>p.width?'portrait':'square')} onClick={()=>onOpen(p)} initial={reduced?false:{opacity:0}} animate={{opacity:1,y:0}} exit={{opacity:0,scale:.97}} transition={{duration:reduced?0:.3,delay:reduced?0:Math.min(index*.035,.2)}} aria-label={'Open '+p.title}><Preview p={p}/><div className="card-info"><span><small>{category(p)}</small><h3>{p.title}</h3></span><ArrowUpRight size={21}/></div></motion.button>}
-function ProjectModal({p,onClose}:{p:Item;onClose:()=>void}){const dialog=useRef<HTMLDialogElement>(null);const reduced=useReducedMotion();useEffect(()=>{stopPreview();const previous=document.activeElement as HTMLElement;const el=dialog.current;el?.showModal();document.body.style.overflow='hidden';return()=>{document.body.style.overflow='';previous?.focus()}},[]);return <dialog ref={dialog} className="project-dialog" aria-labelledby="project-title" onCancel={e=>{e.preventDefault();onClose()}} onClick={e=>{if(e.target===dialog.current)onClose()}}><motion.div className="dialog-body" initial={{opacity:0,y:reduced?0:30}} animate={{opacity:1,y:0}}><button className="close" onClick={onClose} aria-label="Close project"><X/></button><div className="dialog-media">{p.type==='video'?<video src={p.media} poster={p.poster} controls playsInline preload="metadata" aria-label={p.title}/>:<img src={p.media} alt={p.title}/>}</div><div className="dialog-info"><div><p className="project-category">{category(p)}</p><h2 id="project-title">{p.title}</h2></div><p>{p.width} × {p.height}{p.duration?' · '+p.duration.toFixed(1)+' sec':''}<br/>{p.group} collection</p></div>{p.type==='video'&&<p className="caption-note"><Volume2 size={14}/> Use the player controls to turn on sound.</p>}</motion.div></dialog>}
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import {
+  ArrowDown,
+  ArrowRight,
+  ArrowUpRight,
+  ChevronUp,
+  Film,
+  Layers,
+  Menu,
+  Palette,
+  Play,
+  Sparkles,
+  X,
+} from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import profile from "../content/profile.json";
+import { projects, chapterLinks, type Project } from "../lib/projects";
+import { ProjectMedia, ProjectDialog } from "../components/project-media";
+import {
+  ProjectWorkbench,
+  type WorkRequest,
+} from "../components/project-workbench";
+
+const disciplines = [
+  {
+    title: "Video editing",
+    subtitle: "Finding the rhythm.",
+    description: "Cuts, captions, and pacing that bring a sequence together.",
+    category: "Video edits",
+    project: "jrus2",
+    icon: Film,
+  },
+  {
+    title: "2D animation",
+    subtitle: "Giving ideas a personality.",
+    description:
+      "Characters, expressions, and the little movements that make them feel alive.",
+    category: "2D & motion",
+    project: "marms3",
+    icon: Layers,
+  },
+  {
+    title: "Motion graphics",
+    subtitle: "Making the message move.",
+    description:
+      "A different way to tell a story through timing and animated visuals.",
+    category: "2D & motion",
+    project: "marms4",
+    icon: Sparkles,
+  },
+  {
+    title: "Graphic design",
+    subtitle: "Making a frame count.",
+    description:
+      "Composition, color, and type working together to communicate an idea.",
+    category: "Graphic design",
+    project: "redbull2",
+    icon: Palette,
+  },
+];
+const approach = [
+  [
+    "Start with the message.",
+    "What needs to be said? I look for the idea before deciding how it should look.",
+  ],
+  [
+    "Find its rhythm.",
+    "A cut, a pause, a shift in pace. Timing gives the story room to land.",
+  ],
+  [
+    "Give it personality.",
+    "The movement of a character. A choice of color. Details that make the work feel like itself.",
+  ],
+  [
+    "Bring it all together.",
+    "Refine the sequence, check the details, and make sure the final frame belongs to the same story.",
+  ],
+];
+
+function ChapterLabel({
+  number,
+  children,
+}: {
+  number: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <p className="chapter-label">
+      <span>{number}</span>
+      {children}
+    </p>
+  );
+}
+
 export default function Home() {
   const root = useRef<HTMLElement>(null);
-  const [filter, setFilter] = useState('All work');
-  const [collection, setCollection] = useState('Both collections');
-  const [selected, setSelected] = useState<Item | null>(null);
+  const [activeChapter, setActiveChapter] = useState("top");
+  const [discipline, setDiscipline] = useState(0);
   const [menu, setMenu] = useState(false);
-  const [showAll, setShowAll] = useState(false);
+  const [request, setRequest] = useState<WorkRequest | null>(null);
+  const [expanded, setExpanded] = useState<Project | null>(null);
   const reduced = useReducedMotion();
-  const hero = projects.find(p => p.id === 'marms4')!;
-  const heroProjects = ['redbull2', 'jrus2', 'marms3', 'fuel2'].map(id => projects.find(p => p.id === id)!);
-  const initialCount = 12;
+  const heroProject = projects.find((project) => project.id === "marms3")!;
+  const disciplineProject = projects.find(
+    (project) => project.id === disciplines[discipline].project,
+  )!;
+  const pixelProject = projects.find((project) => project.id === "profile4")!;
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
-    const ctx = gsap.context(() => {
+    const context = gsap.context(() => {
       if (reduced) return;
-      gsap.from('.hero-line > span', {yPercent: 110, duration: .9, stagger: .12, ease: 'power3.out'});
-      gsap.from('.hero-showcase', {opacity: 0, y: 25, duration: 1, delay: .15, ease: 'power3.out'});
-      gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach(el => {
-        gsap.from(el, {opacity: 0, y: 24, duration: .65, ease: 'power2.out', scrollTrigger: {trigger: el, start: 'top 94%', once: true}});
+      gsap.from(".intro-title > span > span", {
+        yPercent: 110,
+        duration: 1,
+        stagger: 0.1,
+        ease: "power3.out",
       });
+      gsap.from(".intro-film", {
+        opacity: 0,
+        y: 28,
+        duration: 1,
+        delay: 0.25,
+        ease: "power3.out",
+      });
+      gsap.to(".story-progress", {
+        scaleX: 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: root.current,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: true,
+        },
+      });
+      gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((element) => {
+        gsap.from(element, {
+          opacity: 0,
+          y: 28,
+          duration: 0.7,
+          ease: "power2.out",
+          scrollTrigger: { trigger: element, start: "top 92%", once: true },
+        });
+      });
+      gsap.fromTo(
+        ".journey-light",
+        { y: -25 },
+        {
+          y: 35,
+          ease: "none",
+          scrollTrigger: {
+            trigger: "#journey",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1,
+          },
+        },
+      );
+      gsap.fromTo(
+        ".approach-line-fill",
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".approach-steps",
+            start: "top 65%",
+            end: "bottom 65%",
+            scrub: 0.5,
+          },
+        },
+      );
     }, root);
-    return () => ctx.revert();
+    return () => context.revert();
   }, [reduced]);
 
   useEffect(() => {
-    const pause = () => { if (document.hidden) stopPreview(); };
-    document.addEventListener('visibilitychange', pause);
-    return () => document.removeEventListener('visibilitychange', pause);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveChapter(entry.target.id);
+        });
+      },
+      { rootMargin: "-15% 0px -55% 0px", threshold: 0 },
+    );
+    document
+      .querySelectorAll("[data-chapter]")
+      .forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
   }, []);
 
-  const visible = projects.filter(p => (filter === 'All work' || category(p) === filter) &&
-    (filter !== 'Video edits' || collection === 'Both collections' || p.group === collection));
-  const display = showAll ? visible : visible.slice(0, initialCount);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting)
+            setDiscipline(
+              Number((entry.target as HTMLElement).dataset.discipline),
+            );
+        });
+      },
+      { rootMargin: "-30% 0px -45% 0px", threshold: 0 },
+    );
+    document
+      .querySelectorAll("[data-discipline]")
+      .forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, []);
 
-  function magnetic(e: React.PointerEvent<HTMLAnchorElement>) {
-    if (reduced || e.pointerType !== 'mouse') return;
-    const r = e.currentTarget.getBoundingClientRect();
-    e.currentTarget.style.transform = `translate(${(e.clientX-r.left-r.width/2)*.08}px,${(e.clientY-r.top-r.height/2)*.1}px)`;
+  function explore(options: Omit<WorkRequest, "key">) {
+    setRequest({ ...options, key: Date.now() });
+    setActiveChapter("work");
   }
 
-  return <main ref={root}>
-    <a className="skip" href="#work">Skip to work</a>
-    <header className="nav">
-      <a href="#top" className="wordmark" aria-label="Vinz de Leon, home">
-        <img src="/media/vinz-avatar.webp" alt="" width="52" height="52"/>
-        <span>Vinz<br/>de Leon</span>
+  return (
+    <main ref={root}>
+      <a className="skip-link" href="#work">
+        Skip to projects
       </a>
-      <nav className={menu ? 'nav-links open' : 'nav-links'} aria-label="Main navigation">
-        {[['Work', 'work'], ['About', 'about']].map(([label, id]) => <a key={id} href={'#'+id} onClick={() => setMenu(false)}>{label}</a>)}
-        <a href={'mailto:'+profile.email} className="nav-contact" onClick={() => setMenu(false)}>Let’s talk <ArrowUpRight size={19}/></a>
+      <div className="story-progress" aria-hidden="true" />
+      <header className="site-header">
+        <a className="wordmark" href="#top" aria-label="Vinz de Leon, home">
+          <img src="/media/vinz-avatar.webp" alt="" width="42" height="42" />
+          <span>
+            Vinz
+            <br />
+            de Leon
+          </span>
+        </a>
+        <nav className="desktop-nav" aria-label="Main navigation">
+          <a href="#journey">The journey</a>
+          <a href="#work">My work</a>
+          <a href="#about">About me</a>
+        </nav>
+        <a className="header-contact" href={"mailto:" + profile.email}>
+          Let’s talk <ArrowUpRight size={17} />
+        </a>
+        <button
+          className="menu-toggle icon-button"
+          onClick={() => setMenu(!menu)}
+          aria-label={menu ? "Close menu" : "Open menu"}
+          aria-expanded={menu}
+          aria-controls="mobile-menu"
+        >
+          {menu ? <X /> : <Menu />}
+        </button>
+        {menu && (
+          <nav
+            id="mobile-menu"
+            className="mobile-menu"
+            aria-label="Mobile navigation"
+          >
+            {chapterLinks.map(([id, label]) => (
+              <a key={id} href={"#" + id} onClick={() => setMenu(false)}>
+                {label}
+                <ArrowUpRight size={18} />
+              </a>
+            ))}
+          </nav>
+        )}
+      </header>
+
+      <nav className="chapter-rail" aria-label="Story chapters">
+        {chapterLinks.map(([id, label], index) => (
+          <a
+            href={"#" + id}
+            key={id}
+            aria-current={activeChapter === id ? "location" : undefined}
+          >
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <span>{label}</span>
+          </a>
+        ))}
       </nav>
-      <button className="menu-toggle" onClick={() => setMenu(!menu)} aria-expanded={menu} aria-controls="mobile-menu" aria-label="Toggle navigation">{menu ? <X/> : <Menu/>}</button>
-      {menu && <nav id="mobile-menu" className="mobile-menu" aria-label="Mobile navigation">
-        <a href="#work" onClick={() => setMenu(false)}>Work</a><a href="#about" onClick={() => setMenu(false)}>About</a><a href={'mailto:'+profile.email}>Let’s talk <ArrowUpRight/></a>
-      </nav>}
-    </header>
 
-    <section id="top" className="hero page-width">
-      <div className="hero-copy">
-        <p className="hello">Hi, I’m Vinz.</p>
-        <h1><span className="hero-line"><span>Video editor</span></span><span className="hero-line"><span>& designer<span className="lime-period">.</span></span></span></h1>
-        <p className="hero-description">I edit videos, animate characters, and make graphics. Here’s some of what I’ve been working on.</p>
-        <div className="hero-actions">
-          <a className="primary-button magnetic" href="#work" onPointerMove={magnetic} onPointerLeave={e => e.currentTarget.style.transform=''}>See my work <ArrowDown size={20}/></a>
-          <button className="watch-button" onClick={() => setSelected(hero)}><span><Play size={15} fill="currentColor"/></span>Watch an animation</button>
+      <section id="top" className="chapter introduction" data-chapter>
+        <div className="section-width introduction-grid">
+          <div className="intro-copy">
+            <ChapterLabel number="01">The introduction</ChapterLabel>
+            <h1 className="intro-title">
+              <span>
+                <span>Every frame</span>
+              </span>
+              <span>
+                <span>
+                  tells a <em>story.</em>
+                </span>
+              </span>
+            </h1>
+            <p className="intro-description">
+              I’m Vinz. Video editor, animator,
+              <br className="desktop-break" /> and graphic designer.
+            </p>
+            <p className="intro-detail">
+              I turn ideas into visuals. This is a collection of the edits,
+              characters, and designs I’ve made along the way.
+            </p>
+            <div className="intro-actions">
+              <a className="button button-lime" href="#work">
+                Explore my work <ArrowDown size={18} />
+              </a>
+              <a className="quiet-link" href="#journey">
+                Meet the creative <ArrowRight size={17} />
+              </a>
+            </div>
+          </div>
+          <div className="intro-film">
+            <div className="film-topline">
+              <span>
+                <Play size={14} fill="currentColor" /> A frame from my world
+              </span>
+              <span>2D & motion</span>
+            </div>
+            <div className="intro-screen">
+              <ProjectMedia project={heroProject} priority />
+            </div>
+            <div className="film-caption">
+              <span>{heroProject.title}</span>
+              <a
+                href="#work"
+                onClick={() => explore({ id: heroProject.id })}
+                aria-label={"Explore " + heroProject.title}
+              >
+                <ArrowUpRight size={22} />
+              </a>
+            </div>
+            <div className="filmstrip" aria-hidden="true">
+              {["jrus2", "redbull2", "okd9", "serum2", "fuel2", "marms4"].map(
+                (id) => (
+                  <img
+                    key={id}
+                    src={projects.find((p) => p.id === id)!.poster}
+                    alt=""
+                    width="80"
+                    height="50"
+                    loading="lazy"
+                  />
+                ),
+              )}
+            </div>
+          </div>
+          <div className="intro-bottom">
+            <a href="#journey">
+              Scroll to begin <ArrowDown size={16} />
+            </a>
+            <span>Video. Animation. Design. All part of the story.</span>
+          </div>
         </div>
-      </div>
-      <div className="hero-showcase" aria-label="Featured portfolio projects">
-        {heroProjects.map(p => <button className="hero-project" key={p.id} onClick={() => setSelected(p)} aria-label={'Preview '+p.title}>
-          <Preview p={p} hero/>
-          <span className="hero-project-title">{p.title}<ArrowUpRight size={16}/></span>
-        </button>)}
-      </div>
-      <a href="#work" className="hero-scroll">Scroll for the good stuff <ArrowDown size={18}/></a>
-    </section>
+      </section>
 
-    <div className="marquee" aria-label="Video editing, 2D animation, graphic design"><div aria-hidden="true">{[0,1].map(n => <span key={n}>Video editing <b>+</b> 2D animation <b>+</b> Graphic design <b>+</b> Motion graphics <b>+</b> </span>)}</div></div>
+      <section id="journey" className="chapter journey-section" data-chapter>
+        <div className="journey-light" aria-hidden="true" />
+        <div className="section-width">
+          <ChapterLabel number="02">The creative journey</ChapterLabel>
+          <div className="section-heading" data-reveal>
+            <h2>
+              Different tools.
+              <br />
+              The same curiosity.
+            </h2>
+            <p>
+              Some ideas need a sharp cut.
+              <br />
+              Others need a little movement.
+            </p>
+          </div>
+          <div className="journey-grid">
+            <div className="discipline-preview">
+              <div className="discipline-art">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.img
+                    key={disciplineProject.id}
+                    src={disciplineProject.poster}
+                    alt={disciplineProject.title}
+                    width="600"
+                    height="600"
+                    loading="lazy"
+                    initial={reduced ? false : { opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: reduced ? 0 : 0.2 }}
+                  />
+                </AnimatePresence>
+                <span className="discipline-art-label">
+                  {disciplines[discipline].title}
+                </span>
+              </div>
+              <a
+                className="quiet-link"
+                href="#work"
+                onClick={() =>
+                  explore({ category: disciplines[discipline].category })
+                }
+              >
+                Explore this discipline <ArrowUpRight size={18} />
+              </a>
+            </div>
+            <div className="disciplines">
+              {disciplines.map((item, index) => (
+                <button
+                  className={
+                    "discipline" + (discipline === index ? " active" : "")
+                  }
+                  data-discipline={index}
+                  key={item.title}
+                  aria-pressed={discipline === index}
+                  onClick={() => setDiscipline(index)}
+                >
+                  <span className="discipline-number">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="discipline-body">
+                    <item.icon size={21} />
+                    <strong>{item.title}</strong>
+                    <span>{item.subtitle}</span>
+                    <p>{item.description}</p>
+                  </span>
+                  <ArrowUpRight className="discipline-arrow" size={22} />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section id="work" className="playground section-pad">
-      <div id="playground" className="section-inner">
-        <div className="section-heading" data-reveal><h2>The work.</h2><p>Pick a category. Find something you like.</p></div>
-        <div className="filter-bar" role="group" aria-label="Filter work">{categories.map(c => <button key={c} className={filter === c ? 'active' : ''} aria-pressed={filter === c} onClick={() => {stopPreview(); setFilter(c); setShowAll(false);}}>{c}<span>{c === 'All work' ? projects.length : projects.filter(p => category(p) === c).length}</span></button>)}</div>
-        {filter === 'Video edits' && <div className="collection-filter" role="group" aria-label="Video collection">{['Both collections', 'Reel 1', 'Reel 2'].map(c => <button key={c} aria-pressed={collection === c} onClick={() => {stopPreview(); setCollection(c);}}>{c}</button>)}</div>}
-        <motion.div layout className="gallery"><AnimatePresence mode="popLayout">{display.map((p,i) => <Card p={p} index={i} onOpen={setSelected} key={p.id}/>)}</AnimatePresence></motion.div>
-        <p className="gallery-status" aria-live="polite">{display.length} of {visible.length} projects</p>
-        {visible.length > initialCount && <button className="outline-button" onClick={() => setShowAll(!showAll)}>{showAll ? 'Show less' : 'More work'} <Plus size={20}/></button>}
-      </div>
-    </section>
+      <section id="work" className="chapter work-section" data-chapter>
+        <div id="playground" className="section-width">
+          <ChapterLabel number="03">The project showcase</ChapterLabel>
+          <div className="section-heading" data-reveal>
+            <h2>Take a closer look.</h2>
+            <p>
+              Pick a project. Press play.
+              <br />
+              Stay for the details.
+            </p>
+          </div>
+          <ProjectWorkbench request={request} onExpand={setExpanded} />
+        </div>
+      </section>
 
-    <section id="about" className="about section-pad">
-      <div className="section-inner about-grid">
-        <div className="about-visual" data-reveal><img src="/media/profile4.webp" alt="A pixel-art character animation by Vinz" loading="lazy" width="600" height="500"/><button onClick={() => setSelected(projects.find(p => p.id === 'profile4')!)}>One of my little experiments <Play size={16}/></button></div>
-        <div className="about-copy" data-reveal><h2>A bit about me.</h2><p>{profile.about}</p><p>{profile.philosophy}</p><a href={'mailto:'+profile.email} className="text-link">Say hello <ArrowUpRight size={21}/></a></div>
-      </div>
-    </section>
+      <section id="approach" className="chapter approach-section" data-chapter>
+        <div className="section-width">
+          <ChapterLabel number="04">Behind the creativity</ChapterLabel>
+          <div className="approach-layout">
+            <div className="approach-heading" data-reveal>
+              <h2>
+                Before the cut,
+                <br />
+                there’s an <em>idea.</em>
+              </h2>
+              <p>
+                The software is only part of it. The real work is finding a
+                visual direction that makes the message feel right.
+              </p>
+              <div className="approach-film" aria-hidden="true">
+                {["jrus2", "marms3", "redbull2"].map((id) => (
+                  <img
+                    key={id}
+                    src={projects.find((p) => p.id === id)!.poster}
+                    alt=""
+                    loading="lazy"
+                    width="110"
+                    height="140"
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="approach-steps">
+              <div className="approach-line" aria-hidden="true">
+                <div className="approach-line-fill" />
+              </div>
+              {approach.map(([title, description], index) => (
+                <article className="approach-step" key={title} data-reveal>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <div>
+                    <h3>{title}</h3>
+                    <p>{description}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section className="toolkit section-pad">
-      <div className="section-inner toolkit-grid"><div data-reveal><h2>What I can<br/>help with.</h2><p>From the first cut to the final frame.</p></div><div className="skills">{profile.capabilities.slice(0,4).map(s => <div className="skill" key={s} data-reveal><h3>{s}</h3><ArrowUpRight size={24}/></div>)}</div></div>
-    </section>
+      <section id="about" className="chapter about-section" data-chapter>
+        <div className="section-width">
+          <ChapterLabel number="05">About me</ChapterLabel>
+          <div className="about-grid">
+            <div className="about-art" data-reveal>
+              <img
+                src={pixelProject.poster}
+                alt="Vinz’s pixel-art character"
+                width="600"
+                height="500"
+                loading="lazy"
+              />
+              <button onClick={() => setExpanded(pixelProject)}>
+                A little experiment <Play size={16} />
+              </button>
+            </div>
+            <div className="about-copy" data-reveal>
+              <h2>
+                A person behind
+                <br />
+                the pixels.
+              </h2>
+              <p>
+                I’m Vinz, a video editor and graphic designer. My work includes
+                short-form video editing, character animation, motion graphics,
+                and graphic design.
+              </p>
+              <p>
+                I enjoy creating work with personality, whether that’s a
+                well-timed cut, an expressive animated character, or a graphic
+                that communicates an idea.
+              </p>
+              <a className="quiet-link" href={"mailto:" + profile.email}>
+                Say hello <ArrowUpRight size={18} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <footer id="contact" className="contact section-pad">
-      <div className="section-inner"><p className="contact-intro">Got something in mind?</p><a className="contact-headline" href={'mailto:'+profile.email}><h2>Let’s work<br/>on it together.</h2><ArrowUpRight/></a>
-        <a className="email-link magnetic" href={'mailto:'+profile.email} onPointerMove={magnetic} onPointerLeave={e => e.currentTarget.style.transform=''}>{profile.email}<ArrowUpRight size={23}/></a>
-        <div className="contact-bottom"><a href="#top" className="footer-name">Vinz de Leon</a><span>Video, animation & design</span><a href="#top">Back to top <ArrowUpRight size={17}/></a></div>
-      </div>
-    </footer>
-    {selected && <ProjectModal key={selected.id} p={selected} onClose={() => setSelected(null)}/>}
-  </main>;
+      <footer id="contact" className="chapter contact-section" data-chapter>
+        <div className="section-width">
+          <ChapterLabel number="06">Let’s create something</ChapterLabel>
+          <div className="closing-content" data-reveal>
+            <p>You’ve seen a little of my world.</p>
+            <a className="closing-title" href={"mailto:" + profile.email}>
+              <h2>
+                Let’s make
+                <br />
+                something <em>move.</em>
+              </h2>
+              <ArrowUpRight />
+            </a>
+            <p>
+              Have an idea, a rough cut, or a project in mind?
+              <br />
+              I’d love to hear about it.
+            </p>
+            <a className="email-button" href={"mailto:" + profile.email}>
+              {profile.email}
+              <ArrowUpRight size={21} />
+            </a>
+          </div>
+          <div className="footer-bottom">
+            <a className="footer-signature" href="#top">
+              Vinz de Leon
+            </a>
+            <span>Video editing · Animation · Design</span>
+            <a href="#top">
+              Back to the beginning <ChevronUp size={17} />
+            </a>
+          </div>
+        </div>
+      </footer>
+      {expanded && (
+        <ProjectDialog
+          key={expanded.id}
+          project={expanded}
+          onClose={() => setExpanded(null)}
+        />
+      )}
+    </main>
+  );
 }
