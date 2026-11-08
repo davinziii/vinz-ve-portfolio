@@ -5,6 +5,7 @@ import { AlertCircle, RotateCcw, X } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import type { Project } from "../lib/projects";
 import { category } from "../lib/projects";
+import { connectVideoAudio, muteForAutoplay } from "../lib/video-volume";
 
 export function pauseOtherVideos(current?: HTMLVideoElement) {
   document.querySelectorAll("video").forEach((video) => {
@@ -27,13 +28,17 @@ export function ProjectMedia({
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    if (!video.current) return;
+    return connectVideoAudio(video.current);
+  }, [project.id, attempt, failed]);
+  useEffect(() => {
     const player = video.current;
     if (!player) return;
     let pendingStart = playRequest > 0;
     const start = () => {
       player.play().catch((error: DOMException) => {
         if (error.name === "NotAllowedError") {
-          player.muted = true;
+          muteForAutoplay(player);
           player.play().catch(() => {});
         }
       });
