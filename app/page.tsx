@@ -10,6 +10,8 @@ import {
   Film,
   Layers,
   Menu,
+  Moon,
+  Sun,
   Palette,
   Play,
   Sparkles,
@@ -101,6 +103,20 @@ export default function Home() {
   const [activeChapter, setActiveChapter] = useState("top");
   const [discipline, setDiscipline] = useState(0);
   const [menu, setMenu] = useState(false);
+  const [theme, setTheme] = useState("dark");
+  useEffect(() => {
+    setTheme(
+      document.documentElement.dataset.theme === "light" ? "light" : "dark",
+    );
+  }, []);
+  function toggleTheme() {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem("vinz-theme", next);
+    } catch {}
+  }
   const [request, setRequest] = useState<WorkRequest | null>(null);
   const [expanded, setExpanded] = useState<Project | null>(null);
   const reduced = useReducedMotion();
@@ -224,7 +240,12 @@ export default function Home() {
       <div className="story-progress" aria-hidden="true" />
       <header className="site-header">
         <a className="wordmark" href="#top" aria-label="Vinz de Leon, home">
-          <img src="/media/vinz-avatar.webp" alt="" width="42" height="42" />
+          <img
+            src="/media/vinz-avatar.webp?v=native-v2"
+            alt=""
+            width="42"
+            height="42"
+          />
           <span>
             Vinz
             <br />
@@ -236,18 +257,30 @@ export default function Home() {
           <a href="#work">My work</a>
           <a href="#about">About me</a>
         </nav>
-        <a className="header-contact" href={"mailto:" + profile.email}>
-          Let’s talk <ArrowUpRight size={17} />
-        </a>
-        <button
-          className="menu-toggle icon-button"
-          onClick={() => setMenu(!menu)}
-          aria-label={menu ? "Close menu" : "Open menu"}
-          aria-expanded={menu}
-          aria-controls="mobile-menu"
-        >
-          {menu ? <X /> : <Menu />}
-        </button>
+        <div className="header-actions">
+          <button
+            className="icon-button theme-toggle"
+            onClick={toggleTheme}
+            aria-label={
+              theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+            }
+            title={theme === "dark" ? "Light mode" : "Dark mode"}
+          >
+            {theme === "dark" ? <Sun size={19} /> : <Moon size={19} />}
+          </button>
+          <a className="header-contact" href={"mailto:" + profile.email}>
+            Let’s talk <ArrowUpRight size={17} />
+          </a>
+          <button
+            className="menu-toggle icon-button"
+            onClick={() => setMenu(!menu)}
+            aria-label={menu ? "Close menu" : "Open menu"}
+            aria-expanded={menu}
+            aria-controls="mobile-menu"
+          >
+            {menu ? <X /> : <Menu />}
+          </button>
+        </div>
         {menu && (
           <nav
             id="mobile-menu"
@@ -333,7 +366,7 @@ export default function Home() {
                 (id) => (
                   <img
                     key={id}
-                    src={projects.find((p) => p.id === id)!.poster}
+                    src={projects.find((p) => p.id === id)!.thumbnail}
                     alt=""
                     width="80"
                     height="50"
@@ -491,17 +524,29 @@ export default function Home() {
         <div className="section-width">
           <ChapterLabel number="05">About me</ChapterLabel>
           <div className="about-grid">
-            <div className="about-art" data-reveal>
-              <img
-                src={pixelProject.poster}
-                alt="Vinz’s pixel-art character"
-                width="600"
-                height="500"
-                loading="lazy"
-              />
-              <button onClick={() => setExpanded(pixelProject)}>
-                A little experiment <Play size={16} />
-              </button>
+            <div className="about-card-stack" data-reveal>
+              <div className="portrait-card">
+                <img
+                  src="/media/vinz-portrait.webp?v=native-v2"
+                  alt="Vinz de Leon"
+                  width="1122"
+                  height="1402"
+                  loading="lazy"
+                />
+                <span>Vinz de Leon</span>
+              </div>
+              <div className="about-art pixel-card">
+                <img
+                  src={pixelProject.poster}
+                  alt="Vinz’s pixel-art character"
+                  width="600"
+                  height="500"
+                  loading="lazy"
+                />
+                <button onClick={() => setExpanded(pixelProject)}>
+                  A little experiment <Play size={16} />
+                </button>
+              </div>
             </div>
             <div className="about-copy" data-reveal>
               <h2>

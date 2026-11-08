@@ -15,9 +15,11 @@ export function pauseOtherVideos(current?: HTMLVideoElement) {
 export function ProjectMedia({
   project,
   priority = false,
+  playRequest = 0,
 }: {
   project: Project;
   priority?: boolean;
+  playRequest?: number;
 }) {
   const video = useRef<HTMLVideoElement>(null);
   const [failed, setFailed] = useState(false);
@@ -27,9 +29,28 @@ export function ProjectMedia({
   useEffect(() => {
     const player = video.current;
     if (!player) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) player.pause();
-    });
+    let pendingStart = playRequest > 0;
+    const start = () => {
+      player.play().catch((error: DOMException) => {
+        if (error.name === "NotAllowedError") {
+          player.muted = true;
+          player.play().catch(() => {});
+        }
+      });
+    };
+    const headerHeight =
+      document.querySelector(".site-header")?.getBoundingClientRect().height ??
+      0;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) player.pause();
+        else if (pendingStart) {
+          pendingStart = false;
+          start();
+        }
+      },
+      { rootMargin: `-${headerHeight}px 0px 0px 0px`, threshold: 0.01 },
+    );
     const visibility = () => {
       if (document.hidden) player.pause();
     };
@@ -40,7 +61,7 @@ export function ProjectMedia({
       observer.disconnect();
       document.removeEventListener("visibilitychange", visibility);
     };
-  }, [project.id, attempt, failed]);
+  }, [project.id, attempt, failed, playRequest]);
 
   if (imageFailed)
     return (
@@ -147,7 +168,7 @@ export function ProjectDialog({
             <X />
           </button>
         </div>
-        <ProjectMedia project={project} priority />
+        <ProjectMedia project={project} priority playRequest={1} />
         <p className="dialog-caption">
           {project.width} × {project.height}
           {project.duration

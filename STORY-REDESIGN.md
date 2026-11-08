@@ -29,3 +29,7 @@ The desktop workspace height responds to available screen height. Its overall he
 - Original project JSON and media are checked against the initial inventory; no supplied asset is edited or removed.
 
 Reduced-motion behavior is implemented in CSS and both animation systems; OS preference emulation was not part of browser verification. No automated accessibility audit or real-device benchmark is claimed. Native player controls support sound; source captions remain a content gap.
+
+## Follow-up: media quality, panel swap, personal cards and themes
+
+The current desktop layout supersedes the original orientation above: selector LEFT, larger preview RIGHT. Full native-resolution assets replace the prior 540px video/1200px graphic exports. All 30 output dimensions and thumbnails were verified; ten MP4 video streams match their source packet hashes exactly. User-selected videos autoplay, with a muted fallback if sound playback is blocked. Phone selection scrolls the player into view. Vinz’s photo fans behind the pixel-art card. Dark/light mode is persisted and restored before paint. Both themes and 320/390/768/1440px layouts were browser-checked with no horizontal overflow. Native playback was observed at 1080×1920; a graphic loaded at 4000×4000; theme choice survived reload.

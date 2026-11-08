@@ -1,0 +1,245 @@
+{
+  "revision": "native-v2",
+  "projects": [
+    {
+      "id": "marms3",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 7633808,
+      "mode": "native resolution H.264 CRF 16",
+      "sourceHash": "c29ce211cdd741c115e3418e68638c4d3f317d2327ef77d1897c6e9984f97653"
+    },
+    {
+      "id": "marms4",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 897721,
+      "mode": "native resolution H.264 CRF 16",
+      "sourceHash": "b9c95e642cca40eba9eb47fcc17b27cd43ea275a9e074b7691e73a2c4c7d75ab"
+    },
+    {
+      "id": "marms5",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 1734354,
+      "mode": "native resolution H.264 CRF 16",
+      "sourceHash": "f870380ef9d750abd795a943678566900c3c910509e50741e8069a1af63f1499"
+    },
+    {
+      "id": "marms6",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 3507402,
+      "mode": "native resolution H.264 CRF 16",
+      "sourceHash": "c95238e1ccdaec4b351c3ebd67ac0229d8e0b873086911d03f5f46ac00280505"
+    },
+    {
+      "id": "okd6",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 91829,
+      "mode": "native resolution H.264 CRF 16",
+      "sourceHash": "b2dfc5def09443d586b8b6fb7c98cedb02f83ab1ff1e8e256e471072bb013516"
+    },
+    {
+      "id": "okd7",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 2047493,
+      "mode": "native resolution H.264 CRF 16",
+      "sourceHash": "ae256576e045a00fef2b9daa6fee98a37723ff6e44867ccc59ca9056e6c94db8"
+    },
+    {
+      "id": "okd8",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 1087140,
+      "mode": "native resolution H.264 CRF 16",
+      "sourceHash": "9869e0ef55ec21bf491a565cf084f11868501afd86f5d92d45cccf8cf6a13f7a"
+    },
+    {
+      "id": "okd9",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 757638,
+      "mode": "native resolution H.264 CRF 16",
+      "sourceHash": "55a848ed7a428f570a1f988fdb78d47cf5e5f70b3f881f7c4ebf3e885c53f203"
+    },
+    {
+      "id": "profile4",
+      "width": 600,
+      "height": 500,
+      "bytes": 294590,
+      "mode": "native resolution H.264 CRF 16",
+      "sourceHash": "092e3ca5f283b46d890add2927bf5353c2002ceef978d7a4d614abec1bbd1490"
+    },
+    {
+      "id": "airpods",
+      "width": 4000,
+      "height": 4000,
+      "bytes": 254630,
+      "mode": "native lossless WebP",
+      "sourceHash": "c0aaa064b2328232fdbc48a4eab5b074b8f4acb768c39f41e01f2ca07954c581"
+    },
+    {
+      "id": "coffee2",
+      "width": 4000,
+      "height": 4000,
+      "bytes": 646504,
+      "mode": "native lossless WebP",
+      "sourceHash": "f8243579b80108faac2656845501a12226885894bbab31ee0a60ad63264b34e6"
+    },
+    {
+      "id": "fuel1",
+      "width": 4000,
+      "height": 4000,
+      "bytes": 440856,
+      "mode": "native lossless WebP",
+      "sourceHash": "aef1c99ef97467115d6254cbe1969db6d3938eb7ffa2f7a57a914784e8ec2c48"
+    },
+    {
+      "id": "fuel2",
+      "width": 4000,
+      "height": 4000,
+      "bytes": 1580978,
+      "mode": "native lossless WebP",
+      "sourceHash": "d8748ba28067dfde6ba25f7369f367c7c0d505863e6cbbdc469175faa8a42a0b"
+    },
+    {
+      "id": "ps5",
+      "width": 4000,
+      "height": 4000,
+      "bytes": 2112220,
+      "mode": "native lossless WebP",
+      "sourceHash": "2b369b502c3f89a09e9b58c9c14e9de18406c1eedb0777ff1c2af82edb7d1e90"
+    },
+    {
+      "id": "realestate1",
+      "width": 1500,
+      "height": 1500,
+      "bytes": 2194784,
+      "mode": "native lossless WebP",
+      "sourceHash": "90891aa3e86a857b8462d0d0d04cc13b2a998b2671d0d08f9edcafb16c96e1d1"
+    },
+    {
+      "id": "redbull1",
+      "width": 4000,
+      "height": 6000,
+      "bytes": 17181764,
+      "mode": "native lossless WebP",
+      "sourceHash": "6a569d077593abe9bd48cea9e6283b5d6fad69b2ce7e89a9a2f4a2c932ba2410"
+    },
+    {
+      "id": "redbull2",
+      "width": 4000,
+      "height": 4000,
+      "bytes": 3319468,
+      "mode": "native lossless WebP",
+      "sourceHash": "44beb706826709a91d3161e3fd2ec2dbaffee785d04a7afb6cb5d9fb8d170065"
+    },
+    {
+      "id": "serum1",
+      "width": 4000,
+      "height": 4000,
+      "bytes": 1934996,
+      "mode": "native lossless WebP",
+      "sourceHash": "b81f02f30903efd5282d2b99f89976bd57d311dedbb9748b4101ae80de7a8673"
+    },
+    {
+      "id": "serum2",
+      "width": 4000,
+      "height": 4000,
+      "bytes": 751868,
+      "mode": "native lossless WebP",
+      "sourceHash": "7bb1910dc53ccd3445b5b19728397959876b537146b7dc7c34bd985c98567280"
+    },
+    {
+      "id": "spanish",
+      "width": 4000,
+      "height": 4000,
+      "bytes": 443530,
+      "mode": "native lossless WebP",
+      "sourceHash": "1375cc53531ce406eca3b14acb0a25425b344929a8686ab7c8a3180990a2d441"
+    },
+    {
+      "id": "jrus1",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 12525255,
+      "mode": "original video/audio bitstreams, fast-start remux",
+      "sourceHash": "e24ec6e7dbc1d5d8f5c8cc999d38043bf0f89843d3c7838bb2ec734dd44cc665"
+    },
+    {
+      "id": "jrus2",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 9306507,
+      "mode": "original video/audio bitstreams, fast-start remux",
+      "sourceHash": "78ed6a6cad8f5f92430e269bccf8f5d6cbf1b755f6cc214f1ed6e19bdb72a12a"
+    },
+    {
+      "id": "jrus3",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 17376417,
+      "mode": "original video/audio bitstreams, fast-start remux",
+      "sourceHash": "121f960ea6aefb5df8776611a6d56a41341fd6c64361edad8f5856a0f8c28605"
+    },
+    {
+      "id": "jrus4",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 9000644,
+      "mode": "original video/audio bitstreams, fast-start remux",
+      "sourceHash": "0939d83fa48f00d592a454d69fc31015699dbfc53a7d66531b46270f0f270894"
+    },
+    {
+      "id": "jrus5",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 5783024,
+      "mode": "original video/audio bitstreams, fast-start remux",
+      "sourceHash": "8d17d939df53b49f9b6fe75cd6fcce4efccacb6739e5515dd29c837be4eb38d5"
+    },
+    {
+      "id": "fomo1",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 5177118,
+      "mode": "original video/audio bitstreams, fast-start remux",
+      "sourceHash": "647fd8a4531fb9592fe8dd8306dcb92e4ae2b1d94a47b55f95b798219b553923"
+    },
+    {
+      "id": "fomo2",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 8788631,
+      "mode": "original video/audio bitstreams, fast-start remux",
+      "sourceHash": "6c812c3422ca08d946b68e2f3e1af9dd949108e0dbf1afc36fc780ffcc2d2b4b"
+    },
+    {
+      "id": "fomo3",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 14295490,
+      "mode": "original video/audio bitstreams, fast-start remux",
+      "sourceHash": "c45fa200ab0a685621cf4e978d827252a5e3a9e7b1f800616eeb3bc4cee9f229"
+    },
+    {
+      "id": "fomo4",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 8036954,
+      "mode": "original video/audio bitstreams, fast-start remux",
+      "sourceHash": "a37287755025f2f9842bf34ed119d2089dc75bc143c6bf1cd0aab1a56e58fe03"
+    },
+    {
+      "id": "fomo5",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 5564155,
+      "mode": "original video/audio bitstreams, fast-start remux",
+      "sourceHash": "a6cf4cc656bdbf84a653da3b727ddf7704f83a503f380082acd31761c136fc92"
+    }
+  ]
+}

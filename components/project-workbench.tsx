@@ -38,6 +38,8 @@ export function ProjectWorkbench({
   const [filter, setFilter] = useState("All work");
   const [collection, setCollection] = useState("Both collections");
   const [selectedId, setSelectedId] = useState("jrus1");
+  const [playRequest, setPlayRequest] = useState(0);
+  const preview = useRef<HTMLDivElement>(null);
   const list = useRef<HTMLUListElement>(null);
   const rows = useRef(new Map<string, HTMLButtonElement>());
   const reduced = useReducedMotion();
@@ -66,6 +68,7 @@ export function ProjectWorkbench({
     if (request.id) {
       setFilter("All work");
       setSelectedId(request.id);
+      setPlayRequest((n) => n + 1);
     } else if (request.category) {
       setFilter(request.category);
       setSelectedId(
@@ -98,6 +101,25 @@ export function ProjectWorkbench({
   function choose(project: Project, focus = false) {
     if (project.id !== selected.id) pauseOtherVideos();
     setSelectedId(project.id);
+    setPlayRequest((n) => n + 1);
+    if (!focus && window.matchMedia("(max-width: 900px)").matches) {
+      requestAnimationFrame(() => {
+        if (!preview.current) return;
+        const headerHeight =
+          document.querySelector(".site-header")?.getBoundingClientRect()
+            .height ?? 88;
+        window.scrollTo({
+          top: Math.max(
+            0,
+            window.scrollY +
+              preview.current.getBoundingClientRect().top -
+              headerHeight -
+              12,
+          ),
+          behavior: reduced ? "instant" : "smooth",
+        });
+      });
+    }
     if (focus) {
       const row = rows.current.get(project.id);
       row?.focus({ preventScroll: true });
@@ -160,7 +182,11 @@ export function ProjectWorkbench({
         <span>{projects.length} projects · Video / Animation / Design</span>
       </div>
       <div className="workbench-panels">
-        <div className="preview-panel" data-selected-project={selected.id}>
+        <div
+          className="preview-panel"
+          ref={preview}
+          data-selected-project={selected.id}
+        >
           <div className="preview-toolbar">
             <span>
               <i /> Project preview
@@ -183,7 +209,11 @@ export function ProjectWorkbench({
                 exit={{ opacity: 0 }}
                 transition={{ duration: reduced ? 0 : 0.15 }}
               >
-                <ProjectMedia project={selected} priority />
+                <ProjectMedia
+                  project={selected}
+                  priority
+                  playRequest={playRequest}
+                />
               </motion.div>
             </AnimatePresence>
           </div>
@@ -290,7 +320,7 @@ export function ProjectWorkbench({
                 >
                   <span className="option-thumbnail">
                     <img
-                      src={project.poster}
+                      src={project.thumbnail}
                       alt=""
                       width="64"
                       height="64"

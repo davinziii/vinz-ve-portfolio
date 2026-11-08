@@ -14,7 +14,7 @@ Open http://127.0.0.1:3000. Run `npm run build` for the production static export
 ## Structure
 
 - `app/page.tsx`: introduction, creative journey, project showcase, approach, about and contact chapters. Also owns chapter navigation, journey selection and GSAP scroll choreography.
-- `components/project-workbench.tsx`: selected-project state, category/reel filters, independent project-list scrolling, keyboard browsing and stable preview layout. Preview is left on desktop and first on mobile.
+- `components/project-workbench.tsx`: selected-project state, category/reel filters, independent project-list scrolling, keyboard browsing and stable preview layout. Preview is right on desktop, with the selector on the left, and first on mobile.
 - `components/project-media.tsx`: real video/image rendering, one-at-a-time playback, offscreen/tab-hidden pause, media-error recovery and accessible native expanded dialog.
 - `lib/projects.ts`: existing project titles, ordering, category mapping and descriptions, all connected to the original JSON.
 - `content/projects.json`: all 30 original entries and unchanged media/poster paths.
@@ -24,9 +24,9 @@ Open http://127.0.0.1:3000. Run `npm run build` for the production static export
 
 ## Explore the work
 
-Choose a category and then a project. The selected image or real video replaces the preview without reloading the page. Video Edits also exposes Reel 1 and Reel 2 filters. On desktop, the list scrolls independently on the right. On phones/tablets, it becomes a horizontal selector beneath the preview. Arrow keys, Home and End move selection once the project list has focus; previous/next buttons are available below the preview. Expanded views support Escape and return focus to the launching control.
+Choose a category and then a project. The selected image or real video replaces the preview without reloading the page. Video Edits also exposes Reel 1 and Reel 2 filters. On desktop, the list scrolls independently on the left. On phones/tablets, it becomes a horizontal selector beneath the preview. Arrow keys, Home and End move selection once the project list has focus; previous/next buttons are available below the preview. Expanded views support Escape and return focus to the launching control.
 
-Only the hero and selected-project video exist outside an expanded view. Videos load metadata rather than autoplaying, starting one pauses the others, and offscreen or hidden-page videos pause. Thumbnail rows use lazy images. Failed videos retain a poster and expose Retry. Missing images show an explicit unavailable state.
+Only the hero and selected-project video exist outside an expanded view. Videos initially load metadata; choosing a video starts playback. Starting one pauses the others, and offscreen or hidden-page videos pause. Thumbnail rows use lazy images. Failed videos retain a poster and expose Retry. Missing images show an explicit unavailable state.
 
 GSAP controls entrance/scroll reveals, the reading-progress line and subtle atmospheric motion. Motion handles media crossfades and expanded-view entrance. They do not animate the same properties on the same elements. Reduced-motion settings remove continuous/scroll motion and make media switches immediate. Scrolling remains native.
 
@@ -47,3 +47,13 @@ FFmpeg/FFprobe must be on PATH to regenerate optimized copies. Existing bundled 
 No new clients, achievements, testimonials or project titles were invented. Existing descriptive titles were preserved exactly. Social links and software are omitted where not confirmed. Spoken-content captions have not been supplied. The small avatar remains an AI-assisted edit of Vinz’s photo; no large portrait is used in the hero.
 
 See `STORY-REDESIGN.md` for the audit, design decisions and verification record. Historical design notes remain in `DESIGN-NOTES.md`.
+
+## Native-quality media and viewer update
+
+The current viewer places Find your frame on the LEFT and the larger selected preview on the RIGHT. On mobile, the preview remains first with the horizontal selector beneath it. Selecting a video starts playback; if the browser blocks sound, playback falls back to muted with native controls available. No video starts just from loading the page. On phones, a tapped selection brings the player into view. Only one video plays at a time, and offscreen/tab-hidden playback pauses.
+
+The old 540px video/1200px image reduction has been replaced. MP4 sources are remuxed at their original 1080 × 1920 resolution without re-encoding their video/audio streams. GIF animations use native resolution H.264 at CRF 16. Graphics are lossless WebP at their ORIGINAL dimensions (up to 4000 × 6000). Posters are native-resolution lossless WebP. Separate 480px thumbnails keep the selector light. Versioned media URLs avoid reusing the old browser cache. Existing base media paths and project entries are unchanged.
+
+Run `node scripts/rebuild-media-quality.mjs "C:/Users/Vinz Pogi/Downloads/Port"` to rebuild missing or changed media, or append `--force` to regenerate everything. The normal optimization script now invokes this native-quality pipeline. `node scripts/verify-media-quality.mjs "C:/Users/Vinz Pogi/Downloads/Port"` checks all output dimensions and compares compressed MP4 video packet hashes with the originals. `content/media-quality.json` records the export profile, source hashes, dimensions and sizes. Native-quality media is larger (about 145 MiB total); only selected videos and lazy thumbnails are requested rather than all videos together.
+
+The sun/moon button switches dark and light mode and saves the choice in localStorage. A pre-paint theme initializer restores it on reload. Both modes include the workbench and expanded player. The About section now fans Vinz’s portrait behind the pixel-art card, with restrained hover movement and responsive sizing.

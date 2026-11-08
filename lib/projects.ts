@@ -24,6 +24,9 @@ const titles: Record<string, string> = {
 };
 export const projects = raw.map((p) => ({
   ...p,
+  media: p.media + "?v=native-v2",
+  poster: p.poster + "?v=native-v2",
+  thumbnail: "/media/" + p.id + "-thumb.webp?v=native-v2",
   title:
     (p as SourceProject & { title?: string }).title ||
     titles[p.id] ||
