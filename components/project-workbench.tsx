@@ -41,7 +41,10 @@ export function ProjectWorkbench({ request, sectionCategory, onExpand }: {
     const row = strip.current?.querySelector<HTMLButtonElement>('[aria-pressed="true"]');
     const parent = strip.current;
     if (!row || !parent) return;
-    parent.scrollTo({ left: row.offsetLeft - parent.offsetLeft - (parent.clientWidth - row.clientWidth) / 2, behavior: reduced ? "instant" : "smooth" });
+    const box = row.getBoundingClientRect();
+    const bounds = parent.getBoundingClientRect();
+    if (box.top < bounds.top) parent.scrollTop -= bounds.top - box.top + 8;
+    else if (box.bottom > bounds.bottom) parent.scrollTop += box.bottom - bounds.bottom + 8;
   }, [selected.id, reduced]);
 
   function step(direction: number) {
@@ -52,9 +55,9 @@ export function ProjectWorkbench({ request, sectionCategory, onExpand }: {
     <div className="screen-gallery" role="region" aria-label={sectionCategory + " player"}
       onKeyDown={event => {
         if ((event.target as HTMLElement).closest('video')) return;
-        if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
           event.preventDefault();
-          step(event.key === "ArrowLeft" ? -1 : 1);
+          step(event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 1);
         }
       }}>
       <div className="screen-layout">
@@ -71,11 +74,12 @@ export function ProjectWorkbench({ request, sectionCategory, onExpand }: {
         </div>
         <button className="gallery-arrow" onClick={() => step(1)} aria-label={"Next " + sectionCategory}><ArrowRight /></button>
       </div>
-      <div className="video-thumbnails" ref={strip} role="group" aria-label={sectionCategory + " selection"}>
+      <div className="video-options-panel" ref={strip} role="group" aria-label={sectionCategory + " selection"}>
         {items.map(project => (
           <button key={project.id} aria-label={"Play " + project.title} aria-pressed={selected.id === project.id}
-            onClick={() => choose(project)}>
-            <img src={project.thumbnail} alt="" width="88" height="88" loading="lazy" />
+            className="video-option" onClick={() => choose(project)}>
+            <img src={project.thumbnail} alt="" width="64" height="64" loading="lazy" />
+            <span>{project.title}</span>
           </button>
         ))}
       </div>
