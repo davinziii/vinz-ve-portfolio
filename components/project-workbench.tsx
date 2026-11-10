@@ -1,327 +1,83 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type KeyboardEvent,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Expand,
-  Film,
-  Image as ImageIcon,
-  Play,
-} from "lucide-react";
-import {
-  projects,
-  category,
-  projectDescription,
-  type Project,
-} from "../lib/projects";
+import { ArrowLeft, ArrowRight, Expand } from "lucide-react";
+import { projects, category, type Project } from "../lib/projects";
 import { ProjectMedia, pauseOtherVideos } from "./project-media";
 
 export type WorkRequest = { id?: string; category?: string; key: number };
 
-export function ProjectWorkbench({
-  request,
-  sectionCategory,
-  onExpand,
-}: {
+export function ProjectWorkbench({ request, sectionCategory, onExpand }: {
   request: WorkRequest | null;
   sectionCategory: string;
   onExpand: (project: Project) => void;
 }) {
-  const filter = sectionCategory;
-  const [collection, setCollection] = useState("All videos");
-  const [selectedId, setSelectedId] = useState(projects.find(p => category(p) === sectionCategory)!.id);
+  const items = projects.filter(p => category(p) === sectionCategory);
+  const [selectedId, setSelectedId] = useState(items[0].id);
   const [playRequest, setPlayRequest] = useState(0);
-  const preview = useRef<HTMLDivElement>(null);
-  const list = useRef<HTMLUListElement>(null);
-  const rows = useRef(new Map<string, HTMLButtonElement>());
   const reduced = useReducedMotion();
+  const strip = useRef<HTMLDivElement>(null);
+  const selected = items.find(p => p.id === selectedId) ?? items[0];
+  const index = items.indexOf(selected);
 
-  const filtered = useMemo(
-    () =>
-      projects.filter(
-        (project) =>
-          (filter === "All work" || category(project) === filter) &&
-          (filter !== "Video edits" ||
-            collection === "All videos" ||
-            project.group === collection),
-      ),
-    [filter, collection],
-  );
-  const selected =
-    filtered.find((project) => project.id === selectedId) ?? filtered[0];
-  const selectedIndex = filtered.findIndex(
-    (project) => project.id === selected.id,
-  );
+  function choose(project: Project) {
+    pauseOtherVideos();
+    setSelectedId(project.id);
+    setPlayRequest(n => n + 1);
+  }
 
   useEffect(() => {
     if (!request) return;
-    const target = request.id ? projects.find(p => p.id === request.id) : null;
-    if ((target && category(target) !== sectionCategory) || (!target && request.category !== sectionCategory)) return;
-    pauseOtherVideos();
-    setCollection("All videos");
-    if (request.id) {
-      setSelectedId(request.id);
-      setPlayRequest((n) => n + 1);
-    } else if (request.category) {
-      setSelectedId(
-        projects.find(
-          (p) =>
-            request.category === "All work" || category(p) === request.category,
-        )!.id,
-      );
+    const target = projects.find(p => p.id === request.id);
+    if (target && category(target) === sectionCategory) {
+      pauseOtherVideos();
+      setSelectedId(target.id);
+      setPlayRequest(n => n + 1);
     }
-    list.current?.scrollTo({ top: 0, left: 0 });
   }, [request, sectionCategory]);
 
   useEffect(() => {
-    const row = rows.current.get(selected.id),
-      scroller = list.current;
-    if (!row || !scroller) return;
-    const box = row.getBoundingClientRect(),
-      bounds = scroller.getBoundingClientRect();
-    if (scroller.scrollWidth > scroller.clientWidth + 2) {
-      if (box.left < bounds.left)
-        scroller.scrollLeft -= bounds.left - box.left + 12;
-      if (box.right > bounds.right)
-        scroller.scrollLeft += box.right - bounds.right + 12;
-    } else {
-      if (box.top < bounds.top) scroller.scrollTop -= bounds.top - box.top + 10;
-      if (box.bottom > bounds.bottom)
-        scroller.scrollTop += box.bottom - bounds.bottom + 10;
-    }
-  }, [selected.id, filter, collection]);
-  function choose(project: Project, focus = false) {
-    if (project.id !== selected.id) pauseOtherVideos();
-    setSelectedId(project.id);
-    setPlayRequest((n) => n + 1);
-    if (!focus && window.matchMedia("(max-width: 900px)").matches) {
-      requestAnimationFrame(() => {
-        if (!preview.current) return;
-        const headerHeight =
-          document.querySelector(".site-header")?.getBoundingClientRect()
-            .height ?? 88;
-        window.scrollTo({
-          top: Math.max(
-            0,
-            window.scrollY +
-              preview.current.getBoundingClientRect().top -
-              headerHeight -
-              12,
-          ),
-          behavior: reduced ? "instant" : "smooth",
-        });
-      });
-    }
-    if (focus) {
-      const row = rows.current.get(project.id);
-      row?.focus({ preventScroll: true });
-      const scroller = list.current;
-      if (row && scroller) {
-        const box = row.getBoundingClientRect(),
-          bounds = scroller.getBoundingClientRect();
-        const horizontal = scroller.scrollWidth > scroller.clientWidth + 2;
-        if (horizontal) {
-          if (box.left < bounds.left)
-            scroller.scrollLeft -= bounds.left - box.left + 12;
-          if (box.right > bounds.right)
-            scroller.scrollLeft += box.right - bounds.right + 12;
-        } else {
-          if (box.top < bounds.top)
-            scroller.scrollTop -= bounds.top - box.top + 10;
-          if (box.bottom > bounds.bottom)
-            scroller.scrollTop += box.bottom - bounds.bottom + 10;
-        }
-      }
-    }
-  }
+    const row = strip.current?.querySelector<HTMLButtonElement>('[aria-pressed="true"]');
+    const parent = strip.current;
+    if (!row || !parent) return;
+    parent.scrollTo({ left: row.offsetLeft - parent.offsetLeft - (parent.clientWidth - row.clientWidth) / 2, behavior: reduced ? "instant" : "smooth" });
+  }, [selected.id, reduced]);
 
-  function keyboard(event: KeyboardEvent<HTMLButtonElement>, index: number) {
-    let next = index;
-    if (event.key === "ArrowDown" || event.key === "ArrowRight")
-      next = Math.min(index + 1, filtered.length - 1);
-    else if (event.key === "ArrowUp" || event.key === "ArrowLeft")
-      next = Math.max(index - 1, 0);
-    else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = filtered.length - 1;
-    else return;
-    event.preventDefault();
-    choose(filtered[next], true);
-  }
-
-  function changeCollection(next: string) {
-    pauseOtherVideos();
-    setCollection(next);
-    if (next !== "All videos" && selected.group !== next)
-      setSelectedId(projects.find((p) => p.group === next)!.id);
-    list.current?.scrollTo({ top: 0, left: 0 });
+  function step(direction: number) {
+    choose(items[(index + direction + items.length) % items.length]);
   }
 
   return (
-    <div className="workbench" data-workbench>
-      <div className="workbench-bar">
-        <span>
-          <Film size={17} /> {sectionCategory}
-        </span>
-        <span>{projects.filter(p => category(p) === sectionCategory).length} projects</span>
-      </div>
-      <div className="workbench-panels">
-        <div
-          className="preview-panel"
-          ref={preview}
-          data-selected-project={selected.id}
-        >
-          <div className="preview-toolbar">
-            <span>
-              <i /> Project preview
-            </span>
-            <button
-              className="icon-button"
-              onClick={() => onExpand(selected)}
-              aria-label={"Expand " + selected.title}
-            >
-              <Expand size={18} />
-            </button>
-          </div>
-          <div className="preview-stage">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                className="preview-switch"
-                key={selected.id}
-                initial={reduced ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: reduced ? 0 : 0.15 }}
-              >
-                <ProjectMedia
-                  project={selected}
-                  priority
-                  playRequest={playRequest}
-                />
-              </motion.div>
-            </AnimatePresence>
-          </div>
-          <div className="preview-info" aria-live="polite" aria-atomic="true">
-            <p className="project-category">
-              {category(selected)}{" "}
-              <span>
-                {selected.duration
-                  ? selected.duration.toFixed(1) + " sec"
-                  : "Still image"}
-              </span>
-            </p>
-            <h3>{selected.title}</h3>
-            <p className="project-description">
-              {projectDescription(selected)}
-            </p>
-          </div>
-          <div className="preview-navigation">
-            <span>
-              {String(selectedIndex + 1).padStart(2, "0")}{" "}
-              <span>/ {String(filtered.length).padStart(2, "0")}</span>
-            </span>
-            <div>
-              <button
-                className="icon-button"
-                onClick={() => choose(filtered[selectedIndex - 1])}
-                disabled={selectedIndex === 0}
-                aria-label="Previous project"
-              >
-                <ArrowLeft size={18} />
-              </button>
-              <button
-                className="icon-button"
-                onClick={() => choose(filtered[selectedIndex + 1])}
-                disabled={selectedIndex === filtered.length - 1}
-                aria-label="Next project"
-              >
-                <ArrowRight size={18} />
-              </button>
-            </div>
-          </div>
+    <div className="screen-gallery" role="region" aria-label={sectionCategory + " player"}
+      onKeyDown={event => {
+        if ((event.target as HTMLElement).closest('video')) return;
+        if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+          event.preventDefault();
+          step(event.key === "ArrowLeft" ? -1 : 1);
+        }
+      }}>
+      <div className="screen-layout">
+        <button className="gallery-arrow" onClick={() => step(-1)} aria-label={"Previous " + sectionCategory}><ArrowLeft /></button>
+        <div className="gallery-screen" data-selected-project={selected.id}>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div className="gallery-video" key={selected.id}
+              initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              transition={{ duration: reduced ? 0 : 0.16 }}>
+              <ProjectMedia project={selected} playRequest={playRequest} />
+            </motion.div>
+          </AnimatePresence>
+          <button className="gallery-expand" onClick={() => onExpand(selected)} aria-label={"Expand " + selected.title}><Expand size={19} /></button>
         </div>
-        <aside className="selector-panel" aria-label={sectionCategory + " project selector"}>
-          <div className="selector-heading">
-            <h3>Find your frame.</h3>
-            <span aria-live="polite">{filtered.length} projects</span>
-          </div>
-          {filter === "Video edits" && (
-            <div
-              className="reel-filters"
-              role="group"
-              aria-label="Video collection"
-            >
-              {["All videos", "Clips", "Reel 1", "Reel 2"].map((item) => (
-                <button
-                  key={item}
-                  aria-pressed={collection === item}
-                  onClick={() => changeCollection(item)}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          )}
-          <ul className="selector-items" ref={list} aria-label="Projects">
-            {filtered.map((project, index) => (
-              <li key={project.id}>
-                <button
-                  ref={(node) => {
-                    if (node) rows.current.set(project.id, node);
-                    else rows.current.delete(project.id);
-                  }}
-                  className={
-                    "project-option" +
-                    (selected.id === project.id ? " is-selected" : "")
-                  }
-                  data-project-id={project.id}
-                  aria-label={"Select " + project.title}
-                  aria-pressed={selected.id === project.id}
-                  tabIndex={selected.id === project.id ? 0 : -1}
-                  onClick={() => choose(project)}
-                  onKeyDown={(event) => keyboard(event, index)}
-                >
-                  <span className="option-thumbnail">
-                    <img
-                      src={project.thumbnail}
-                      alt=""
-                      width="64"
-                      height="64"
-                      loading="lazy"
-                    />
-                    {project.type === "video" ? (
-                      <Play size={12} fill="currentColor" />
-                    ) : (
-                      <ImageIcon size={13} />
-                    )}
-                  </span>
-                  <span className="option-copy">
-                    <strong>{project.title}</strong>
-                    <span>{category(project)}</span>
-                  </span>
-                  {selected.id === project.id ? (
-                    <Check className="selected-check" size={17} />
-                  ) : (
-                    <span className="option-number">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                  )}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <p className="selector-hint">
-            Choose a project. Use arrow keys to explore.
-          </p>
-        </aside>
+        <button className="gallery-arrow" onClick={() => step(1)} aria-label={"Next " + sectionCategory}><ArrowRight /></button>
+      </div>
+      <div className="video-thumbnails" ref={strip} role="group" aria-label={sectionCategory + " selection"}>
+        {items.map(project => (
+          <button key={project.id} aria-label={"Play " + project.title} aria-pressed={selected.id === project.id}
+            onClick={() => choose(project)}>
+            <img src={project.thumbnail} alt="" width="88" height="88" loading="lazy" />
+          </button>
+        ))}
       </div>
     </div>
   );

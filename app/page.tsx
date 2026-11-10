@@ -27,13 +27,15 @@ import {
   type WorkRequest,
 } from "../components/project-workbench";
 
+import { GraphicCarousel } from "../components/graphic-carousel";
+
 const disciplines = [
   {
     title: "Video editing",
     subtitle: "Finding the rhythm.",
     description: "Cuts, captions, and pacing that bring a sequence together.",
     category: "Video edits",
-    project: "jrus2",
+    project: "reel-jrus",
     icon: Film,
   },
   {
@@ -365,7 +367,7 @@ export default function Home() {
               </a>
             </div>
             <div className="filmstrip" aria-hidden="true">
-              {["jrus2", "redbull2", "okd9", "serum2", "fuel2", "marms4"].map(
+              {["reel-jrus", "redbull2", "okd9", "serum2", "fuel2", "marms4"].map(
                 (id) => (
                   <img
                     key={id}
@@ -480,7 +482,11 @@ export default function Home() {
           {workSections.map(section => (
             <section key={section.id} id={section.id} className="discipline-collection" aria-labelledby={section.id + "-title"}>
               <h3 id={section.id + "-title"} className="collection-title">{section.title}</h3>
-              <ProjectWorkbench sectionCategory={section.category} request={request} onExpand={setExpanded} />
+              {section.category === "Graphic design" ? (
+                <GraphicCarousel request={request} onExpand={setExpanded} />
+              ) : (
+                <ProjectWorkbench sectionCategory={section.category} request={request} onExpand={setExpanded} />
+              )}
             </section>
           ))}
         </div>
@@ -501,7 +507,7 @@ export default function Home() {
                 visual direction that makes the message feel right.
               </p>
               <div className="approach-film" aria-hidden="true">
-                {["jrus2", "marms3", "redbull2"].map((id) => (
+                {["reel-jrus", "marms3", "redbull2"].map((id) => (
                   <img
                     key={id}
                     src={projects.find((p) => p.id === id)!.poster}
