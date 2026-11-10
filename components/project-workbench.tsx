@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import {
   projects,
-  categories,
   category,
   projectDescription,
   type Project,
@@ -30,14 +29,16 @@ export type WorkRequest = { id?: string; category?: string; key: number };
 
 export function ProjectWorkbench({
   request,
+  sectionCategory,
   onExpand,
 }: {
   request: WorkRequest | null;
+  sectionCategory: string;
   onExpand: (project: Project) => void;
 }) {
-  const [filter, setFilter] = useState("All work");
-  const [collection, setCollection] = useState("Both collections");
-  const [selectedId, setSelectedId] = useState("jrus1");
+  const filter = sectionCategory;
+  const [collection, setCollection] = useState("All videos");
+  const [selectedId, setSelectedId] = useState(projects.find(p => category(p) === sectionCategory)!.id);
   const [playRequest, setPlayRequest] = useState(0);
   const preview = useRef<HTMLDivElement>(null);
   const list = useRef<HTMLUListElement>(null);
@@ -50,7 +51,7 @@ export function ProjectWorkbench({
         (project) =>
           (filter === "All work" || category(project) === filter) &&
           (filter !== "Video edits" ||
-            collection === "Both collections" ||
+            collection === "All videos" ||
             project.group === collection),
       ),
     [filter, collection],
@@ -63,14 +64,14 @@ export function ProjectWorkbench({
 
   useEffect(() => {
     if (!request) return;
+    const target = request.id ? projects.find(p => p.id === request.id) : null;
+    if ((target && category(target) !== sectionCategory) || (!target && request.category !== sectionCategory)) return;
     pauseOtherVideos();
-    setCollection("Both collections");
+    setCollection("All videos");
     if (request.id) {
-      setFilter("All work");
       setSelectedId(request.id);
       setPlayRequest((n) => n + 1);
     } else if (request.category) {
-      setFilter(request.category);
       setSelectedId(
         projects.find(
           (p) =>
@@ -79,7 +80,7 @@ export function ProjectWorkbench({
       );
     }
     list.current?.scrollTo({ top: 0, left: 0 });
-  }, [request]);
+  }, [request, sectionCategory]);
 
   useEffect(() => {
     const row = rows.current.get(selected.id),
@@ -156,19 +157,10 @@ export function ProjectWorkbench({
     choose(filtered[next], true);
   }
 
-  function changeFilter(next: string) {
-    pauseOtherVideos();
-    setFilter(next);
-    setCollection("Both collections");
-    if (next !== "All work" && category(selected) !== next)
-      setSelectedId(projects.find((p) => category(p) === next)!.id);
-    list.current?.scrollTo({ top: 0, left: 0 });
-  }
-
   function changeCollection(next: string) {
     pauseOtherVideos();
     setCollection(next);
-    if (next !== "Both collections" && selected.group !== next)
+    if (next !== "All videos" && selected.group !== next)
       setSelectedId(projects.find((p) => p.group === next)!.id);
     list.current?.scrollTo({ top: 0, left: 0 });
   }
@@ -177,9 +169,9 @@ export function ProjectWorkbench({
     <div className="workbench" data-workbench>
       <div className="workbench-bar">
         <span>
-          <Film size={17} /> The collection
+          <Film size={17} /> {sectionCategory}
         </span>
-        <span>{projects.length} projects · Video / Animation / Design</span>
+        <span>{projects.filter(p => category(p) === sectionCategory).length} projects</span>
       </div>
       <div className="workbench-panels">
         <div
@@ -256,31 +248,10 @@ export function ProjectWorkbench({
             </div>
           </div>
         </div>
-        <aside className="selector-panel" aria-label="Project selector">
+        <aside className="selector-panel" aria-label={sectionCategory + " project selector"}>
           <div className="selector-heading">
             <h3>Find your frame.</h3>
             <span aria-live="polite">{filtered.length} projects</span>
-          </div>
-          <div
-            className="project-filters"
-            role="group"
-            aria-label="Filter projects"
-          >
-            {categories.map((item) => (
-              <button
-                key={item}
-                aria-pressed={filter === item}
-                onClick={() => changeFilter(item)}
-              >
-                {item === "All work"
-                  ? "All Work"
-                  : item === "Video edits"
-                    ? "Video Edits"
-                    : item === "2D & motion"
-                      ? "2D & Motion"
-                      : "Graphic Design"}
-              </button>
-            ))}
           </div>
           {filter === "Video edits" && (
             <div
@@ -288,7 +259,7 @@ export function ProjectWorkbench({
               role="group"
               aria-label="Video collection"
             >
-              {["Both collections", "Reel 1", "Reel 2"].map((item) => (
+              {["All videos", "Clips", "Reel 1", "Reel 2"].map((item) => (
                 <button
                   key={item}
                   aria-pressed={collection === item}

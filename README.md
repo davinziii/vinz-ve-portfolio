@@ -59,3 +59,5 @@ Run `node scripts/rebuild-media-quality.mjs "C:/Users/Vinz Pogi/Downloads/Port"`
 The sun/moon button switches dark and light mode and saves the choice in localStorage. A pre-paint theme initializer restores it on reload. Both modes include the workbench and expanded player. The About section now fans Vinz’s portrait behind the pixel-art card, with restrained hover movement and responsive sizing.
 
 Video volume and mute are shared across the hero, showcase, and expanded player, and saved locally for the next visit. Browser-required autoplay muting does not replace the saved preference. Run `node scripts/test-video-volume.mjs` for the audio preference checks.
+
+The showcase has separate Video Edits, 2D & Motion, and Graphic Design sections (13, 9, and 11 projects). The three additional clips retain their original video/audio streams and native resolution. Import them with `node scripts/import-clips.mjs <clips-folder>`. Media rebuild/quality scripts accept `--clips=<clips-folder>` alongside the original Port folder. Shared volume and click-to-play apply across sections.

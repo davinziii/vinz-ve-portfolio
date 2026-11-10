@@ -51,7 +51,9 @@ for (const item of items) {
         ],
         { encoding: "utf8" },
       ).trim();
-    if (hash(path.join(process.argv[2], item.group, item.file)) !== hash(media))
+    if (hash(item.group === "Clips"
+      ? path.join(process.argv.find(arg => arg.startsWith("--clips="))?.slice(8) ?? path.join(process.argv[2], "Clips"), item.file)
+      : path.join(process.argv[2], item.group, item.file)) !== hash(media))
       throw Error("Video stream changed: " + item.id);
     preserved++;
   }

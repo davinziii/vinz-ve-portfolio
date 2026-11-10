@@ -388,5 +388,47 @@
     "sha256": "a6cf4cc656bdbf84a653da3b727ddf7704f83a503f380082acd31761c136fc92",
     "poster": "/media/fomo5.webp",
     "media": "/media/fomo5.mp4"
+  },
+  {
+    "id": "dvces-300",
+    "title": "DVCES / 300",
+    "file": "DVCES_300.mp4",
+    "group": "Clips",
+    "bytes": 47351724,
+    "width": 1080,
+    "height": 1920,
+    "duration": 28.420998,
+    "type": "video",
+    "sha256": "5dbe3ac4537ccb44766d4441a6d2870e4b1be07bdd38bbc47e7fd5fd3bb4281d",
+    "poster": "/media/dvces-300.webp",
+    "media": "/media/dvces-300.mp4"
+  },
+  {
+    "id": "dvces-war",
+    "title": "DVCES / War",
+    "file": "DVCESWar_R.mp4",
+    "group": "Clips",
+    "bytes": 29874774,
+    "width": 1080,
+    "height": 1920,
+    "duration": 15.395011,
+    "type": "video",
+    "sha256": "2f89781c46bcf9b2d0d45395e124c6fe5b35d5af4dbab5ecad1a130d0a755f78",
+    "poster": "/media/dvces-war.webp",
+    "media": "/media/dvces-war.mp4"
+  },
+  {
+    "id": "weird-avatar-drillers",
+    "title": "Weird Avatar Drillers",
+    "file": "weird avatar drillers.mp4",
+    "group": "Clips",
+    "bytes": 7226473,
+    "width": 1920,
+    "height": 1080,
+    "duration": 27.347,
+    "type": "video",
+    "sha256": "a7478c0ba159f1bbb3d078d929f1e9ea0bf8233c3bc6054e99208138ce94dad4",
+    "poster": "/media/weird-avatar-drillers.webp",
+    "media": "/media/weird-avatar-drillers.mp4"
   }
 ]

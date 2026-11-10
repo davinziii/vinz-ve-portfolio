@@ -20,7 +20,7 @@ import {
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import profile from "../content/profile.json";
-import { projects, chapterLinks, type Project } from "../lib/projects";
+import { projects, chapterLinks, workSections, category, type Project } from "../lib/projects";
 import { ProjectMedia, ProjectDialog } from "../components/project-media";
 import {
   ProjectWorkbench,
@@ -230,6 +230,9 @@ export default function Home() {
   function explore(options: Omit<WorkRequest, "key">) {
     setRequest({ ...options, key: Date.now() });
     setActiveChapter("work");
+    const target = options.id ? projects.find(p => p.id === options.id) : null;
+    const section = workSections.find(s => s.category === (target ? category(target) : options.category));
+    if (section) requestAnimationFrame(() => document.getElementById(section.id)?.scrollIntoView({ behavior: reduced ? "instant" : "smooth" }));
   }
 
   return (
@@ -471,7 +474,15 @@ export default function Home() {
               Stay for the details.
             </p>
           </div>
-          <ProjectWorkbench request={request} onExpand={setExpanded} />
+          <nav className="work-section-links" aria-label="Portfolio disciplines">
+            {workSections.map(section => <a key={section.id} href={"#" + section.id}>{section.title}<ArrowDown size={16} /></a>)}
+          </nav>
+          {workSections.map(section => (
+            <section key={section.id} id={section.id} className="discipline-collection" aria-labelledby={section.id + "-title"}>
+              <h3 id={section.id + "-title"} className="collection-title">{section.title}</h3>
+              <ProjectWorkbench sectionCategory={section.category} request={request} onExpand={setExpanded} />
+            </section>
+          ))}
         </div>
       </section>
 

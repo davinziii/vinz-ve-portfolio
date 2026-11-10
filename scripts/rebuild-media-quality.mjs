@@ -35,7 +35,9 @@ const probe = (file) =>
     ]),
   );
 for (const item of items) {
-  const original = path.join(source, item.group, item.file),
+  const original = item.group === "Clips"
+    ? path.join(process.argv.find(arg => arg.startsWith("--clips="))?.slice(8) ?? path.join(source, "Clips"), item.file)
+    : path.join(source, item.group, item.file),
     dest = project + "/public" + item.media,
     poster = project + "/public" + item.poster;
   if (!fs.existsSync(original)) throw Error("Missing original: " + item.file);

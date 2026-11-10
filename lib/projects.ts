@@ -41,6 +41,9 @@ export const categories = [
   "Graphic design",
 ];
 const order = [
+  "dvces-300",
+  "dvces-war",
+  "weird-avatar-drillers",
   "redbull2",
   "jrus1",
   "marms4",
@@ -55,7 +58,7 @@ projects.sort(
     (order.includes(a.id) ? order.indexOf(a.id) : 99) -
     (order.includes(b.id) ? order.indexOf(b.id) : 99),
 );
-export const category = (p: SourceProject) =>
+export const category = (p: { group: string }) =>
   p.group === "Graphic Designs"
     ? "Graphic design"
     : p.group === "2d Animations"
@@ -67,6 +70,8 @@ export function projectDescription(p: Project): string {
     return "A graphic design from my collection. Open the full artwork to explore the composition and details.";
   if (p.group === "2d Animations")
     return "A short animation from my 2D & motion collection. Press play to watch the character and scene unfold.";
+  if (p.group === "Clips")
+    return "A video edit from my latest clips. Press play to watch the full sequence.";
   return (
     "A vertical video edit from the " +
     p.group +
@@ -80,4 +85,10 @@ export const chapterLinks = [
   ["approach", "The approach"],
   ["about", "About Vinz"],
   ["contact", "Let’s create"],
+] as const;
+
+export const workSections = [
+  { id: "video-edits", title: "Video Edits", category: "Video edits" },
+  { id: "motion", title: "2D & Motion", category: "2D & motion" },
+  { id: "graphic-design", title: "Graphic Design", category: "Graphic design" },
 ] as const;
