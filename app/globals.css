@@ -2140,12 +2140,12 @@ html[data-theme="light"] .art-card { background: #fff; border-color: #16201620; 
 .showcase-dropdown-links a:hover, .showcase-dropdown-links a:focus-visible { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--text); }
 .mobile-menu .showcase-dropdown-links { position: static; box-shadow: none; margin-bottom: 8px; }
 .showcase-header { justify-content: space-between; }
-.showcase-content { padding-top: 150px; padding-bottom: 80px; }
+.showcase-content { padding-top: 40px; padding-bottom: 80px; }
 .showcase-content h1 { font-size: clamp(28px, 4vw, 48px); letter-spacing: -.045em; line-height: 1.2; margin: 28px 0 36px; }
 .showcase-empty { padding: 80px 24px; border: 1px solid var(--line); border-radius: 16px; text-align: center; background: var(--panel); }
 .showcase-empty p { font-size: 24px; margin-bottom: 20px; }
 .showcase-empty .quiet-link { justify-content: center; }
 .showcase-contact { margin-top: 48px; }
 .video-option video { width: 56px; height: 56px; flex-shrink: 0; object-fit: cover; border-radius: 4px; }
-@media(max-width:600px) { .showcase-content { padding-top: 120px; } .showcase-header .showcase-dropdown-links { right: -40px; min-width: 230px; } }
+@media(max-width:600px) { .showcase-content { padding-top: 28px; } .showcase-header .showcase-dropdown-links { right: -40px; min-width: 230px; } }
 .mobile-menu { max-height: calc(100svh - 76px); overflow-y: auto; }
