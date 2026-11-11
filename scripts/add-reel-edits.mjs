@@ -1,0 +1,34 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+const source=process.argv[2];
+if(!source) throw Error('Usage: node scripts/add-reel-edits.mjs <Reel Edits folder>');
+const root=path.resolve(import.meta.dirname,'..');
+const manifest=root+'/content/projects.json';
+const previous=JSON.parse(fs.readFileSync(manifest));
+const items=[...previous];
+const qualityPath=root+'/content/media-quality.json';
+const quality=JSON.parse(fs.readFileSync(qualityPath));
+quality.projects=quality.projects.filter(p=>items.some(item=>item.id===p.id));
+const run=args=>execFileSync('ffmpeg',['-y','-v','error',...args]);
+const hash=file=>execFileSync('ffmpeg',['-v','error','-i',file,'-map','0:v:0','-map','0:a?','-c','copy','-f','streamhash','-hash','sha256','-'],{encoding:'utf8'}).split('\n').filter(line => /^\d+,/.test(line)).join('\n');
+const additions=fs.readdirSync(source,{withFileTypes:true}).filter(e=>e.isFile() && /\.mp4$/i.test(e.name) && !previous.some(p=>p.group==='Reel Edits' && p.file===e.name)).map(e=>[e.name,'reel-'+path.parse(e.name).name.toLowerCase().replace(/[^a-z0-9]+/g,'-'),path.parse(e.name).name]);
+for(const [file,id,title] of additions) {
+ const input=path.join(source,file), media='/media/'+id+'.mp4', poster='/media/'+id+'.webp';
+ const info=JSON.parse(execFileSync('ffprobe',['-v','quiet','-show_streams','-show_format','-of','json',input]));
+ const v=info.streams.find(s=>s.codec_type==='video');
+ const duration=Number(info.format.duration);
+ run(['-i',input,'-map','0:v:0','-map','0:a?','-c','copy','-movflags','+faststart',root+'/public'+media]);
+ if(hash(input)!==hash(root+'/public'+media)) throw Error('Stream changed: '+id);
+ run(['-ss',String(Math.min(2,duration/3)),'-i',input,'-frames:v','1','-c:v','libwebp','-lossless','1',root+'/public'+poster]);
+ run(['-i',root+'/public'+poster,'-vf','scale=480:480:force_original_aspect_ratio=decrease','-frames:v','1','-c:v','libwebp','-quality','90',root+'/public/media/'+id+'-thumb.webp']);
+ const sha256=createHash('sha256').update(fs.readFileSync(input)).digest('hex');
+ const entry={id,title,file,group:'Reel Edits',bytes:fs.statSync(input).size,width:v.width,height:v.height,duration,type:'video',sha256,poster,media};
+ const index=items.findIndex(p=>p.id===id); if(index<0)items.push(entry);else items[index]=entry;
+ quality.projects=quality.projects.filter(p=>p.id!==id);
+ quality.projects.push({id,sourceHash:sha256,width:v.width,height:v.height,bytes:fs.statSync(root+'/public'+media).size,mode:'original video/audio bitstreams, fast-start remux'});
+ console.log(id,v.width+'x'+v.height,duration+' seconds; video and audio unchanged');
+}
+fs.writeFileSync(manifest,JSON.stringify(items,null,2)+'\n');
+fs.writeFileSync(qualityPath,JSON.stringify(quality,null,2)+'\n');

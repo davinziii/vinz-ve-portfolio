@@ -200,6 +200,38 @@
       "height": 1920,
       "bytes": 46425732,
       "mode": "original video/audio bitstreams, fast-start remux"
+    },
+    {
+      "id": "reel-iman-dumbest-investment",
+      "sourceHash": "22ee3a6510e02cdd5b2859079eb2642a80aafbb67e7f21af98ea9bf1c802af21",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 103231279,
+      "mode": "original video/audio bitstreams, fast-start remux"
+    },
+    {
+      "id": "reel-tjr-bugatti",
+      "sourceHash": "7d5588d7baea492dcead78faa7460e8e5ff5864901c180f4f23523847a168d1d",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 99825871,
+      "mode": "original video/audio bitstreams, fast-start remux"
+    },
+    {
+      "id": "reel-tjr-crashout",
+      "sourceHash": "edd76116480ec15d6f08db7e48d69be70fa2130e00be42a39ab80519ae906ace",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 62054092,
+      "mode": "original video/audio bitstreams, fast-start remux"
+    },
+    {
+      "id": "reel-tjr-rent",
+      "sourceHash": "6c2f649db316272b4d4ff22c32df1dc6b5539b88e5a6d8242160ef5d4b7b4b1e",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 81479579,
+      "mode": "original video/audio bitstreams, fast-start remux"
     }
   ]
 }
