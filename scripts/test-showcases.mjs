@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import Module from 'node:module';
+import ts from 'typescript';
+const root=process.cwd();
+const file=path.join(root,'lib/showcases.ts');
+const compiled=ts.transpileModule(await fs.readFile(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,esModuleInterop:true}}).outputText;
+const loaded=new Module(file);loaded.filename=file;loaded.paths=Module._nodeModulePaths(path.dirname(file));loaded._compile(compiled,file);
+const {showcases,getShowcaseProjects}=loaded.exports;
+const fixture=await fs.mkdtemp(path.join(os.tmpdir(),'vinz-showcase-test-'));
+try {
+ process.chdir(fixture);
+ for(const item of showcases) await fs.mkdir(path.join('public',item.title),{recursive:true});
+ assert.equal(showcases.length,7);
+ assert.deepEqual(await getShowcaseProjects('video-edit-1'),[]);
+ const folder=path.join('public',showcases[0].title);
+ for(const name of ['10 - second.mp4','2 - first.mp4','2 - first.poster.jpg','ignore.txt','unrelated.jpg']) await fs.writeFile(path.join(folder,name),'fixture');
+ const items=await getShowcaseProjects('video-edit-1');
+ assert.deepEqual(items.map(p=>p.title),['2 first','10 second']);
+ assert.equal(items[0].type,'video');assert.match(items[0].poster,/poster\.jpg/);
+ assert.equal(items[1].thumbnail,'');assert.match(items[0].media,/Showcase%20Video%20Edit%201/);
+ assert.deepEqual(await getShowcaseProjects('video-edit-2'),[]);
+ assert.deepEqual(await getShowcaseProjects('../video-edit-1'),[]);
+ const graphicFolder=path.join('public','Showcase Graphic Design');
+ await fs.writeFile(path.join(graphicFolder,'Artwork.png'),'fixture');
+ await fs.writeFile(path.join(graphicFolder,'ignore.mp4'),'fixture');
+ const images=await getShowcaseProjects('graphic-design');assert.equal(images.length,1);assert.equal(images[0].type,'image');
+ console.log('Showcase checks passed: seven collections, isolation, ordering, URL encoding, posters, formats, unknown routes and empty states.');
+} finally {process.chdir(root);await fs.rm(fixture,{recursive:true,force:true});}

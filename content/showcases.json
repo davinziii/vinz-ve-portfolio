@@ -1,0 +1,37 @@
+[
+  {
+    "slug": "video-edit-1",
+    "title": "Showcase Video Edit 1",
+    "category": "Video edits"
+  },
+  {
+    "slug": "video-edit-2",
+    "title": "Showcase Video Edit 2",
+    "category": "Video edits"
+  },
+  {
+    "slug": "video-edit-3",
+    "title": "Showcase Video Edit 3",
+    "category": "Video edits"
+  },
+  {
+    "slug": "video-edit-4",
+    "title": "Showcase Video Edit 4",
+    "category": "Video edits"
+  },
+  {
+    "slug": "video-edit-5",
+    "title": "Showcase Video Edit 5",
+    "category": "Video edits"
+  },
+  {
+    "slug": "2d-animation",
+    "title": "Showcase 2d Animation",
+    "category": "2D & motion"
+  },
+  {
+    "slug": "graphic-design",
+    "title": "Showcase Graphic Design",
+    "category": "Graphic design"
+  }
+]

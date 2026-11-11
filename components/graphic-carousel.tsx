@@ -6,12 +6,14 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { projects, category, type Project } from "../lib/projects";
 import type { WorkRequest } from "./project-workbench";
 
-const artwork = projects.filter(p => category(p) === "Graphic design");
+const defaultArtwork = projects.filter(p => category(p) === "Graphic design");
 
-export function GraphicCarousel({ request, onExpand }: {
+export function GraphicCarousel({ request, onExpand, collection }: {
+  collection?: Project[];
   request: WorkRequest | null;
   onExpand: (project: Project) => void;
 }) {
+  const artwork = collection ?? defaultArtwork;
   const [current, setCurrent] = useState(0);
   const reduced = useReducedMotion();
   const touchX = useRef<number | null>(null);
@@ -55,7 +57,7 @@ export function GraphicCarousel({ request, onExpand }: {
                 opacity: visible ? 1 : 0 }}
               transition={{ duration: reduced ? 0 : 0.42, ease: [0.22, 1, 0.36, 1] }}
               onClick={() => offset === 0 ? onExpand(project) : setCurrent(index)}>
-              <img src={project.media} alt={project.title} width={project.width} height={project.height} loading="lazy" draggable={false} />
+              <img src={project.media} alt={project.title} width={project.width || undefined} height={project.height || undefined} loading="lazy" draggable={false} />
             </motion.button>
           );
         })}

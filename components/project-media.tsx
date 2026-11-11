@@ -84,7 +84,7 @@ export function ProjectMedia({
           key={attempt}
           ref={video}
           src={project.media}
-          poster={project.poster}
+          poster={project.poster || undefined}
           controls
           playsInline
           preload="metadata"
@@ -96,8 +96,8 @@ export function ProjectMedia({
         <img
           src={project.type === "image" ? project.media : project.poster}
           alt={project.title}
-          width={project.width}
-          height={project.height}
+          width={project.width || undefined}
+          height={project.height || undefined}
           loading={priority ? "eager" : "lazy"}
           onError={() => setImageFailed(true)}
         />
@@ -175,7 +175,7 @@ export function ProjectDialog({
         </div>
         <ProjectMedia project={project} priority playRequest={1} />
         <p className="dialog-caption">
-          {project.width} × {project.height}
+          {project.width > 0 && project.height > 0 ? `${project.width} × ${project.height}` : ""}
           {project.duration
             ? " · " + project.duration.toFixed(1) + " seconds"
             : ""}{" "}

@@ -29,6 +29,8 @@ import {
 
 import { GraphicCarousel } from "../components/graphic-carousel";
 
+import { ShowcaseDropdown } from "../components/showcase-dropdown";
+
 const disciplines = [
   {
     title: "Video editing",
@@ -261,6 +263,7 @@ export default function Home() {
           <a href="#journey">The journey</a>
           <a href="#work">My work</a>
           <a href="#about">About me</a>
+          <ShowcaseDropdown />
         </nav>
         <div className="header-actions">
           <button
@@ -292,6 +295,7 @@ export default function Home() {
             className="mobile-menu"
             aria-label="Mobile navigation"
           >
+            <ShowcaseDropdown onNavigate={() => setMenu(false)} />
             {chapterLinks.map(([id, label]) => (
               <a key={id} href={"#" + id} onClick={() => setMenu(false)}>
                 {label}

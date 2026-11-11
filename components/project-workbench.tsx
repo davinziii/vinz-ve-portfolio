@@ -8,12 +8,13 @@ import { ProjectMedia, pauseOtherVideos } from "./project-media";
 
 export type WorkRequest = { id?: string; category?: string; key: number };
 
-export function ProjectWorkbench({ request, sectionCategory, onExpand }: {
+export function ProjectWorkbench({ request, sectionCategory, onExpand, collection }: {
+  collection?: Project[];
   request: WorkRequest | null;
   sectionCategory: string;
   onExpand: (project: Project) => void;
 }) {
-  const items = projects.filter(p => category(p) === sectionCategory);
+  const items = collection ?? projects.filter(p => category(p) === sectionCategory);
   const [selectedId, setSelectedId] = useState(items[0].id);
   const [playRequest, setPlayRequest] = useState(0);
   const reduced = useReducedMotion();
@@ -78,7 +79,7 @@ export function ProjectWorkbench({ request, sectionCategory, onExpand }: {
         {items.map(project => (
           <button key={project.id} aria-label={"Play " + project.title} aria-pressed={selected.id === project.id}
             className="video-option" onClick={() => choose(project)}>
-            <img src={project.thumbnail} alt="" width="64" height="64" loading="lazy" />
+            {project.thumbnail ? <img src={project.thumbnail} alt="" width="64" height="64" loading="lazy" /> : <video src={project.media + "#t=0.1"} muted playsInline preload="metadata" aria-hidden="true" />}
             <span>{project.title}</span>
           </button>
         ))}
