@@ -41,11 +41,12 @@ export const categories = [
   "Graphic design",
 ];
 const order = [
+  "reel-fomo",
+  "reel-jrus",
+  "reel-iman-dumbest-investment",
   "reel-dvces-300",
   "reel-dvces-drillers",
   "reel-dvces-war",
-  "reel-fomo",
-  "reel-jrus",
   "redbull2",
   "marms4",
   "serum2",
@@ -58,6 +59,12 @@ projects.sort(
     (order.includes(a.id) ? order.indexOf(a.id) : 99) -
     (order.includes(b.id) ? order.indexOf(b.id) : 99),
 );
+let videoExample = 0;
+for (const project of projects) {
+  if (project.group !== "Graphic Designs" && project.group !== "2d Animations") {
+    project.title = "Example " + ++videoExample;
+  }
+}
 export const category = (p: { group: string }) =>
   p.group === "Graphic Designs"
     ? "Graphic design"
