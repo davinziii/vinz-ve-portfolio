@@ -4,3 +4,7 @@ out/
 *.tsbuildinfo
 .openai/local*
 asset-inventory.json
+
+/public/Portfolio Works/**/*.mp4
+/public/Portfolio Works/**/*.MOV
+/public/Portfolio Works/**/*.gif

@@ -1,0 +1,11 @@
+import fs from 'node:fs';import path from 'node:path';import {execFileSync} from 'node:child_process';import {createHash} from 'node:crypto';
+const config=JSON.parse(fs.readFileSync('content/work-categories.json'));const dest='public/portfolio-media';fs.mkdirSync(dest,{recursive:true});let previous={};try{previous=JSON.parse(fs.readFileSync('content/portfolio-media.json'));}catch{}
+const output=[];const run=args=>execFileSync('ffmpeg',['-y','-v','error',...args],{maxBuffer:10e6});
+for(const c of config){const dir=path.join('public','Portfolio Works',c.title);const files=fs.readdirSync(dir).filter(f=>/\.(mp4|webm|m4v|mov|gif)$/i.test(f)).sort((a,b)=>a.localeCompare(b,'en',{numeric:true}));for(const [index,file] of files.entries()){
+const source=path.join(dir,file), stat=fs.statSync(source),id=c.id+'-'+createHash('sha256').update(file).digest('hex').slice(0,10),signature=stat.size+'-'+stat.mtimeMs;const cached=previous.items?.find(p=>p.id===id&&p.signature===signature);if(cached&&fs.existsSync(dest+'/'+id+'.mp4')){output.push(cached);continue;}
+const info=JSON.parse(execFileSync('ffprobe',['-v','quiet','-show_streams','-show_format','-of','json',source]));const v=info.streams.find(s=>s.codec_type==='video');const target=dest+'/'+id+'.mp4';const transcode=/\.gif$/i.test(file)||stat.size>100000000||v.codec_name!=='h264';
+run(['-i',source,...(transcode?['-c:v','libx264','-preset','fast','-crf','18','-pix_fmt','yuv420p','-vf','scale=trunc(iw/2)*2:trunc(ih/2)*2','-c:a','aac','-b:a','192k']:['-map','0:v:0','-map','0:a?','-c','copy']),'-movflags','+faststart',target]);if(fs.statSync(target).size>=100000000)throw Error('Output too large '+file);
+run(['-ss','0.2','-i',target,'-frames:v','1','-vf','scale=480:-2','-c:v','libwebp','-quality','88',dest+'/'+id+'.webp']);
+output.push({id,signature,title:'Example '+(index+1),file,group:c.id==='2d-animation'?'2d Animations':c.title,categoryId:c.id,type:'video',media:'/portfolio-media/'+id+'.mp4',poster:'/portfolio-media/'+id+'.webp',thumbnail:'/portfolio-media/'+id+'.webp',width:v.width,height:v.height,duration:Number(info.format.duration),bytes:fs.statSync(target).size,sha256:''});console.log(c.title,file,Math.round(fs.statSync(target).size/1e6)+' MB');
+}}
+fs.writeFileSync('content/portfolio-media.json',JSON.stringify({items:output},null,2)+'\n');console.log('Prepared '+output.length+' works');
