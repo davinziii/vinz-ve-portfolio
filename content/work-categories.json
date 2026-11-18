@@ -1,0 +1,47 @@
+[
+  {
+    "id": "motion-visuals",
+    "title": "Motion & Visuals",
+    "projects": []
+  },
+  {
+    "id": "talking-heads",
+    "title": "Talking Heads",
+    "projects": []
+  },
+  {
+    "id": "ai-ads",
+    "title": "AI Ads",
+    "projects": []
+  },
+  {
+    "id": "clipping",
+    "title": "Clipping",
+    "projects": [
+      "reel-fomo",
+      "reel-jrus",
+      "reel-iman-dumbest-investment",
+      "reel-dvces-300",
+      "reel-dvces-drillers",
+      "reel-dvces-war",
+      "reel-tjr-bugatti",
+      "reel-tjr-crashout",
+      "reel-tjr-rent"
+    ]
+  },
+  {
+    "id": "2d-animation",
+    "title": "2D Animation",
+    "projects": [
+      "marms4",
+      "okd9",
+      "marms3",
+      "marms5",
+      "marms6",
+      "okd6",
+      "okd7",
+      "okd8",
+      "profile4"
+    ]
+  }
+]

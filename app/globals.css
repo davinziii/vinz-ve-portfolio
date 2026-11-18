@@ -2149,3 +2149,20 @@ html[data-theme="light"] .art-card { background: #fff; border-color: #16201620; 
 .video-option video { width: 56px; height: 56px; flex-shrink: 0; object-fit: cover; border-radius: 4px; }
 @media(max-width:600px) { .showcase-content { padding-top: 28px; } .showcase-header .showcase-dropdown-links { right: -40px; min-width: 230px; } }
 .mobile-menu { max-height: calc(100svh - 76px); overflow-y: auto; }
+.categorized-work { display:grid; grid-template-columns:minmax(260px,.8fr) minmax(0,2fr);gap:24px;align-items:start; }
+.category-preview {grid-column:2;grid-row:1;min-width:0;}
+.category-toolbar {height:52px;display:flex;align-items:center;padding-left:56px;}
+.category-toolbar select {font:600 18px Manrope,sans-serif;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 32px 9px 12px;max-width:100%;cursor:pointer;}
+.category-selector {grid-column:1;grid-row:1;height:clamp(532px,calc(100svh - 128px),902px);overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:16px;scrollbar-width:thin;}
+.sample-category {padding-bottom:26px;scroll-margin-top:12px;}
+.sample-category:last-child {padding-bottom:20px;min-height:calc(100% - 12px);}
+.sample-category h4 {font-size:15px;font-weight:600;margin:0 0 13px;}
+.sample-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 8px;}
+.sample-grid button {min-width:0;background:transparent;padding:3px;border:1px solid transparent;border-radius:7px;text-align:left;}
+.sample-grid button[aria-pressed="true"] {border-color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,transparent);}
+.sample-grid img,.sample-grid video {display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:5px;background:var(--background);}
+.sample-grid span {display:block;font-size:11px;line-height:1.5;margin-top:5px;}
+.category-no-samples {font-size:13px;color:var(--muted);padding:8px 0 20px;}
+.category-empty-preview {height:100%;display:grid;place-items:center;color:#a4aea8;}
+@media(max-width:900px){.categorized-work{grid-template-columns:1fr;gap:18px;}.category-preview{grid-column:1;grid-row:1;}.category-selector{grid-column:1;grid-row:2;height:360px;}.category-toolbar{padding-left:56px;}}
+@media(max-width:600px){.category-toolbar{padding-left:38px;}.category-toolbar select{font-size:16px;}.category-selector{padding:14px;}.sample-grid span{font-size:12px;}}

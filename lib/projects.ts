@@ -96,6 +96,5 @@ export const chapterLinks = [
 
 export const workSections = [
   { id: "video-edits", title: "Video Edits", category: "Video edits" },
-  { id: "motion", title: "2D & Motion", category: "2D & motion" },
   { id: "graphic-design", title: "Graphic Design", category: "Graphic design" },
 ] as const;
