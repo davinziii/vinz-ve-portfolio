@@ -23,6 +23,13 @@ export function ProjectMedia({
   playRequest?: number;
 }) {
   const video = useRef<HTMLVideoElement>(null);
+  const [nearViewport, setNearViewport] = useState(priority || playRequest > 0);
+  const container = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { setNearViewport(true); observer.disconnect(); } }, { rootMargin: "300px" });
+    if (container.current) observer.observe(container.current);
+    return () => observer.disconnect();
+  }, []);
   const [failed, setFailed] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
@@ -78,16 +85,16 @@ export function ProjectMedia({
     );
 
   return (
-    <div className="project-media">
+    <div className="project-media" ref={container}>
       {project.type === "video" && !failed ? (
         <video
           key={attempt}
           ref={video}
-          src={project.media}
+          src={nearViewport || playRequest > 0 ? project.media : undefined}
           poster={project.poster || undefined}
           controls
           playsInline
-          preload="metadata"
+          preload={nearViewport || playRequest > 0 ? "metadata" : "none"}
           aria-label={project.title}
           onPlay={() => pauseOtherVideos(video.current ?? undefined)}
           onError={() => setFailed(true)}
