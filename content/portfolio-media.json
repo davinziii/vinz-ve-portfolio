@@ -171,6 +171,23 @@
       "sha256": ""
     },
     {
+      "id": "ai-ads-f0f37a6441",
+      "signature": "39931252-1795019925508.8975",
+      "title": "Example 3",
+      "file": "AI Ads 3.mp4",
+      "group": "AI Ads",
+      "categoryId": "ai-ads",
+      "type": "video",
+      "media": "/portfolio-media/ai-ads-f0f37a6441.mp4",
+      "poster": "/portfolio-media/ai-ads-f0f37a6441.webp",
+      "thumbnail": "/portfolio-media/ai-ads-f0f37a6441.webp",
+      "width": 1080,
+      "height": 1920,
+      "duration": 22.477007,
+      "bytes": 39938728,
+      "sha256": ""
+    },
+    {
       "id": "clipping-a3a6727b45",
       "signature": "41184333-1793369578023.8674",
       "title": "Example 1",
