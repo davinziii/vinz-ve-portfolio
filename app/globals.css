@@ -2188,3 +2188,29 @@ html[data-theme="light"] .art-card { background: #fff; border-color: #16201620; 
 .sample-play {position:absolute;right:5px;top:5px;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;color:white;background:#101418b3;}
 @media(max-width:900px){.categorized-work{grid-template-columns:1fr;}.category-preview{padding:0 12px 14px;border-left:0;}.category-toolbar{height:64px;padding-left:8px;margin-bottom:12px;}.category-selector{height:360px;border-top:1px solid var(--line);padding:20px 18px;}.category-trigger{font-size:18px;}.category-preview .gallery-screen{height:clamp(350px,calc(100svh - 230px),620px);}.category-menu-options{min-width:230px;}.sample-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
 @media(prefers-reduced-motion:reduce){.sample-grid button,.category-trigger svg{transition:none;}}
+/* Readable category hierarchy and slower-paced story sections. */
+.category-trigger {font-size:clamp(23px,2.2vw,29px);line-height:1.3;letter-spacing:-.65px;}
+.category-toolbar {height:86px;}
+.sample-category h4 {font-size:clamp(20px,1.65vw,24px);line-height:1.35;padding-bottom:13px;margin-bottom:18px;border-bottom:1px solid var(--line);letter-spacing:-.4px;}
+.sample-category {padding-bottom:36px;}
+.journey-section .discipline {padding:44px 0;min-height:250px;}
+.journey-section .discipline-body {row-gap:12px;}
+.journey-section .discipline-body > strong {font-size:clamp(29px,2.7vw,38px);line-height:1.25;}
+.journey-section .discipline-body > span {font-size:18px;line-height:1.65;}
+.journey-section .discipline-body > p {font-size:17px;line-height:1.8;max-width:440px;color:var(--muted);margin-top:4px;}
+.journey-section .discipline-number {font-size:14px;}
+.approach-section .approach-heading > p {font-size:19px;line-height:1.8;max-width:420px;}
+.approach-section .approach-step {padding-bottom:64px;min-height:220px;}
+.approach-section .approach-step:last-child {padding-bottom:0;min-height:180px;}
+.approach-section .approach-step h3 {font-size:clamp(27px,2.3vw,33px);line-height:1.3;}
+.approach-section .approach-step p {font-size:18px;line-height:1.8;max-width:440px;margin-top:16px;}
+@media(max-width:600px){
+ .category-trigger {font-size:22px;}.category-toolbar{height:76px;}
+ .sample-category h4{font-size:21px;}
+ .journey-section .discipline {padding:32px 0;min-height:230px;}
+ .journey-section .discipline-body > strong{font-size:28px;}
+ .journey-section .discipline-body > span,.journey-section .discipline-body > p{font-size:16px;}
+ .approach-section .approach-heading > p,.approach-section .approach-step p{font-size:17px;}
+ .approach-section .approach-step{padding-bottom:48px;min-height:210px;}
+ .approach-section .approach-step h3{font-size:27px;}
+}
