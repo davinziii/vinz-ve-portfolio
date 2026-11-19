@@ -105,6 +105,21 @@ function ChapterLabel({
 
 export default function Home({ workCategories }: { workCategories: WorkCategory[] }) {
   const root = useRef<HTMLElement>(null);
+  useEffect(() => {
+    function redirectLegacyWorkLink() {
+      if (window.location.hash !== "#work") return;
+      window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search + "#video-edits");
+      requestAnimationFrame(() => {
+        document.getElementById("video-edits")?.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+          block: "start",
+        });
+      });
+    }
+    redirectLegacyWorkLink();
+    window.addEventListener("hashchange", redirectLegacyWorkLink);
+    return () => window.removeEventListener("hashchange", redirectLegacyWorkLink);
+  }, []);
   const [activeChapter, setActiveChapter] = useState("top");
   const [discipline, setDiscipline] = useState(0);
   const [menu, setMenu] = useState(false);
@@ -243,7 +258,7 @@ export default function Home({ workCategories }: { workCategories: WorkCategory[
 
   return (
     <main ref={root}>
-      <a className="skip-link" href="#work">
+      <a className="skip-link" href="#video-edits">
         Skip to projects
       </a>
       <div className="story-progress" aria-hidden="true" />
@@ -263,7 +278,7 @@ export default function Home({ workCategories }: { workCategories: WorkCategory[
         </a>
         <nav className="desktop-nav" aria-label="Main navigation">
           <a href="#journey">The journey</a>
-          <a href="#work">My work</a>
+          <a href="#video-edits">My work</a>
           <a href="#about">About me</a>
           <ShowcaseDropdown />
         </nav>
@@ -299,7 +314,7 @@ export default function Home({ workCategories }: { workCategories: WorkCategory[
           >
             <ShowcaseDropdown onNavigate={() => setMenu(false)} />
             {chapterLinks.map(([id, label]) => (
-              <a key={id} href={"#" + id} onClick={() => setMenu(false)}>
+              <a key={id} href={"#" + (id === "work" ? "video-edits" : id)} onClick={() => setMenu(false)}>
                 {label}
                 <ArrowUpRight size={18} />
               </a>
@@ -311,7 +326,7 @@ export default function Home({ workCategories }: { workCategories: WorkCategory[
       <nav className="chapter-rail" aria-label="Story chapters">
         {chapterLinks.map(([id, label], index) => (
           <a
-            href={"#" + id}
+            href={"#" + (id === "work" ? "video-edits" : id)}
             key={id}
             aria-current={activeChapter === id ? "location" : undefined}
           >
@@ -344,7 +359,7 @@ export default function Home({ workCategories }: { workCategories: WorkCategory[
               characters, and designs I’ve made along the way.
             </p>
             <div className="intro-actions">
-              <a className="button button-lime" href="#work">
+              <a className="button button-lime" href="#video-edits">
                 Explore my work <ArrowDown size={18} />
               </a>
               <a className="quiet-link" href="#journey">
@@ -365,7 +380,7 @@ export default function Home({ workCategories }: { workCategories: WorkCategory[
             <div className="film-caption">
               <span>{heroProject.title}</span>
               <a
-                href="#work"
+                href="#video-edits"
                 onClick={() => explore({ id: heroProject.id })}
                 aria-label={"Explore " + heroProject.title}
               >
@@ -435,7 +450,7 @@ export default function Home({ workCategories }: { workCategories: WorkCategory[
               </div>
               <a
                 className="quiet-link"
-                href="#work"
+                href="#video-edits"
                 onClick={() =>
                   explore({ category: disciplines[discipline].category })
                 }

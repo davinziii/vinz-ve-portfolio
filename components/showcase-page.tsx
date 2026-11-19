@@ -25,7 +25,7 @@ export function ShowcasePage({ title, category, items }: { title: string; catego
       <button className="icon-button" onClick={toggleTheme} aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>{theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}</button>
     </header>
     <section id="examples" className="section-width showcase-content">
-      <a className="quiet-link" href="/#work"><ArrowLeft size={17} /> Back to portfolio</a>
+      <a className="quiet-link" href="/#video-edits"><ArrowLeft size={17} /> Back to portfolio</a>
       <h1>{title}</h1>
       {items.length === 0 ? <div className="showcase-empty"><p>Examples coming soon.</p><a className="quiet-link" href={'mailto:' + profile.email}>Ask about a project <ArrowUpRight size={17} /></a></div> : category === 'Graphic design' ? <GraphicCarousel collection={items} request={null} onExpand={setExpanded} /> : <ProjectWorkbench collection={items} sectionCategory={category} request={null} onExpand={setExpanded} />}
       <a className="quiet-link showcase-contact" href={'mailto:' + profile.email}>Let’s work together <ArrowUpRight size={17} /></a>
