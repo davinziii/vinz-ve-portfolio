@@ -35,6 +35,23 @@
       "sha256": ""
     },
     {
+      "id": "motion-visuals-f3d8aa53fc",
+      "signature": "89168036-1795593182776.7224",
+      "title": "Example 3",
+      "file": "Showcase Edit 4 Example 1.mp4",
+      "group": "Motion & Visuals",
+      "categoryId": "motion-visuals",
+      "type": "video",
+      "media": "/portfolio-media/motion-visuals-f3d8aa53fc.mp4",
+      "poster": "/portfolio-media/motion-visuals-f3d8aa53fc.webp",
+      "thumbnail": "/portfolio-media/motion-visuals-f3d8aa53fc.webp",
+      "width": 1080,
+      "height": 1920,
+      "duration": 36.7,
+      "bytes": 89121191,
+      "sha256": ""
+    },
+    {
       "id": "talking-heads-ba52779f03",
       "signature": "94588547-1794900937636.8223",
       "title": "Example 1",
